@@ -1,0 +1,34 @@
+# =============================================================================
+# Keep-Alive — Maintient le serveur Render actif (plan gratuit)
+# Envoie une requête GET /health toutes les 10 minutes
+# =============================================================================
+
+name: Keep Alive
+
+on:
+  schedule:
+    # Toutes les 10 minutes (cron UTC)
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Permet aussi de le lancer manuellement
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping API health
+        run: |
+          # Ajouter un délai aléatoire de 0 à 120 secondes
+          DELAY=$((RANDOM % 120))
+          echo "Attente de ${DELAY}s avant le ping..."
+          sleep $DELAY
+
+          # Envoyer la requête
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${{ secrets.API_URL }}/health" \
+            --max-time 15)
+
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "✅ Keep-alive OK (HTTP $HTTP_CODE)"
+          else
+            echo "⚠️ Keep-alive échoué (HTTP $HTTP_CODE)"
+          fi
