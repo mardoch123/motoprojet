@@ -1,0 +1,144 @@
+# =============================================================================
+# Backend Deploy — Déploiement automatique sur Railway
+# Déclenché uniquement sur merge dans main (après CI verte)
+# =============================================================================
+name: Backend Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-deploy.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environnement cible'
+        required: true
+        default: 'production'
+        type: choice
+        options: [staging, production]
+
+concurrency:
+  group: backend-deploy
+  cancel-in-progress: false
+
+env:
+  RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+  RAILWAY_SERVICE: motoprojet-api
+
+jobs:
+  # ─── 1. Build + vérification finale ────────────────────────────────────────
+  pre-deploy:
+    name: Pre-deploy Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Type-check
+        run: npx tsc --noEmit
+
+      - name: Build production
+        run: npm run build
+
+  # ─── 2. Migration de la base de données ────────────────────────────────────
+  migrate:
+    name: Run Database Migrations
+    runs-on: ubuntu-latest
+    needs: pre-deploy
+    environment: ${{ github.event.inputs.environment || 'production' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install
+        run: npm ci
+        working-directory: backend
+
+      - name: Build
+        run: npm run build
+        working-directory: backend
+
+      - name: Run migrations
+        run: node dist/db/migrate.js
+        working-directory: backend
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
+          JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
+          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
+          NODE_ENV: production
+
+  # ─── 3. Déploiement Railway ────────────────────────────────────────────────
+  deploy:
+    name: Deploy to Railway
+    runs-on: ubuntu-latest
+    needs: migrate
+    environment:
+      name: ${{ github.event.inputs.environment || 'production' }}
+      url: ${{ vars.PRODUCTION_URL || 'https://api.motoprojet.bj' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy to Railway
+        run: railway up --service ${{ env.RAILWAY_SERVICE }}
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT: ${{ secrets.RAILWAY_PROJECT_ID }}
+
+      - name: Health check
+        run: |
+          echo "Attente du démarrage du service..."
+          sleep 30
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${{ vars.PRODUCTION_URL || 'https://api.motoprojet.bj' }}/health" \
+            --max-time 15)
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "Health check échoué : HTTP $HTTP_STATUS"
+            exit 1
+          fi
+          echo "Health check réussi (HTTP 200)"
+
+  # ─── 4. Notification (optionnel) ───────────────────────────────────────────
+  notify:
+    name: Notify Deployment
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: always()
+
+    steps:
+      - name: Deployment status
+        run: |
+          if [ "${{ needs.deploy.result }}" == "success" ]; then
+            echo "✅ Déploiement réussi !"
+          else
+            echo "❌ Déploiement échoué — vérifier les logs Railway"
+          fi

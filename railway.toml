@@ -1,0 +1,25 @@
+# =============================================================================
+# Configuration Railway — MotoProjet API
+# Documentation : https://docs.railway.app/
+# =============================================================================
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+numReplicas = 1
+healthcheckPath = "/health"
+healthcheckTimeout = 100
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# Variables d'environnement à configurer dans le dashboard Railway :
+# - DATABASE_URL (Neon PostgreSQL)
+# - JWT_ACCESS_SECRET
+# - JWT_REFRESH_SECRET
+# - ENCRYPTION_KEY
+# - KKIAPAY_API_KEY
+# - KKIAPAY_WEBHOOK_SECRET
+# - DEEPSEEK_API_KEY ou CLAUDE_API_KEY
+# - R2_ENDPOINT, R2_ACCESS_KEY, R2_SECRET_KEY, R2_BUCKET, R2_PUBLIC_URL

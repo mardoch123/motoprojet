@@ -1,0 +1,116 @@
+# =============================================================================
+# Neon Branch Preview — Crée une branche Neon pour staging/PR
+# Déclenché sur push vers develop ou PR vers main
+# =============================================================================
+name: Neon Branch Preview
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - 'backend/src/db/**'
+      - '.github/workflows/neon-branch.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/src/db/**'
+
+concurrency:
+  group: neon-branch-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─── 1. Créer une branche Neon pour staging ────────────────────────────────
+  create-branch:
+    name: Create Neon Branch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create Neon branch via API
+        id: create
+        run: |
+          RESPONSE=$(curl -s -X POST \
+            "https://console.neon.tech/api/v2/projects/${{ secrets.NEON_PROJECT_ID }}/branches" \
+            -H "Authorization: Bearer ${{ secrets.NEON_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "branch": {
+                "name": "preview-${{ github.event.pull_request.number || github.sha }}",
+                "parent_id": "${{ secrets.NEON_MAIN_BRANCH_ID }}",
+                "endpoints_auto_suspendation_enabled": true
+              }
+            }')
+
+          BRANCH_ID=$(echo "$RESPONSE" | jq -r '.branch.id')
+          DB_URL=$(echo "$RESPONSE" | jq -r '.connection_uris[0].connection_uri')
+
+          echo "branch_id=$BRANCH_ID" >> $GITHUB_OUTPUT
+          echo "::add-mask::$DB_URL"
+          echo "db_url=$DB_URL" >> $GITHUB_OUTPUT
+
+          echo "Branche Neon créée : $BRANCH_ID"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: backend
+
+      - name: Run migrations on preview branch
+        run: npm run db:migrate
+        working-directory: backend
+        env:
+          DATABASE_URL: ${{ steps.create.outputs.db_url }}
+          JWT_ACCESS_SECRET: preview-secret-min-32-characters-long!!
+          JWT_REFRESH_SECRET: preview-refresh-secret-min-32-chars!!
+          ENCRYPTION_KEY: preview-encryption-key-32-chars-ok!!
+          NODE_ENV: staging
+
+      - name: Comment PR with preview DB URL
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🗄️ **Branche Neon preview créée**\n` +
+                    `Branch ID: \`${{ steps.create.outputs.branch_id }}\`\n` +
+                    `Les migrations ont été appliquées avec succès.\n` +
+                    `Cette branche sera supprimée automatiquement après fusion.`
+            })
+
+  # ─── 2. Nettoyage après fusion (supprimer la branche Neon) ─────────────────
+  cleanup-branch:
+    name: Cleanup Neon Branch
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+
+    steps:
+      - name: Delete Neon branch
+        run: |
+          # Trouver et supprimer la branche Neon associée à cette PR
+          BRANCHES=$(curl -s -X GET \
+            "https://console.neon.tech/api/v2/projects/${{ secrets.NEON_PROJECT_ID }}/branches" \
+            -H "Authorization: Bearer ${{ secrets.NEON_API_KEY }}")
+
+          # Chercher la branche par nom (contenant le numéro de PR)
+          BRANCH_ID=$(echo "$BRANCHES" | jq -r ".branches[] | select(.name | contains(\"preview-${{ github.event.pull_request.number }}\")) | .id" | head -1)
+
+          if [ -n "$BRANCH_ID" ] && [ "$BRANCH_ID" != "null" ]; then
+            curl -s -X DELETE \
+              "https://console.neon.tech/api/v2/projects/${{ secrets.NEON_PROJECT_ID }}/branches/$BRANCH_ID" \
+              -H "Authorization: Bearer ${{ secrets.NEON_API_KEY }}"
+            echo "Branche Neon $BRANCH_ID supprimée"
+          else
+            echo "Aucune branche Neon trouvée pour cette PR"
+          fi

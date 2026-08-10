@@ -1,0 +1,48 @@
+import { Router } from 'express';
+import authRoutes from './auth.js';
+import chauffeursRoutes from './chauffeurs.js';
+import vehiculesRoutes from './vehicules.js';
+import paiementsRoutes from './paiements.js';
+import incidentsRoutes from './incidents.js';
+import salairesRoutes from './salaires.js';
+import dashboardRoutes from './dashboard.js';
+import uploadRoutes from './upload.js';
+import notificationsRoutes from './notifications.js';
+import iaRoutes from './ia.js';
+import iaAdminRoutes from './iaAdmin.js';
+import anomaliesRoutes from './anomalies.js';
+import supportRoutes from './support.js';
+import financesRoutes from './finances.js';
+import penalitesRoutes from './penalites.js';
+import fleetRoutes from './fleet.js';
+import kkiapayRoutes from './kkiapay.js';
+import contratsRoutes from './contrats.js';
+import auditRoutes from './audit.js';
+import rgpdRoutes from './rgpd.js';
+import monitoringRoutes from './monitoring.js';
+
+const router = Router();
+
+router.use('/auth', authRoutes);
+router.use('/chauffeurs', chauffeursRoutes);
+router.use('/vehicules', vehiculesRoutes);
+router.use('/paiements', paiementsRoutes);
+router.use('/incidents', incidentsRoutes);
+router.use('/salaires', salairesRoutes);
+router.use('/dashboard', dashboardRoutes);
+router.use('/upload', uploadRoutes);
+router.use('/notifications', notificationsRoutes);
+router.use('/ia', iaRoutes);
+router.use('/ia/admin', iaAdminRoutes);
+router.use('/anomalies', anomaliesRoutes);
+router.use('/support', supportRoutes);
+router.use('/finances', financesRoutes);
+router.use('/penalites', penalitesRoutes);
+router.use('/fleet', fleetRoutes);
+router.use('/kkiapay', kkiapayRoutes);
+router.use('/contrats', contratsRoutes);
+router.use('/audit', auditRoutes);
+router.use('/rgpd', rgpdRoutes);
+router.use('/monitoring', monitoringRoutes);
+
+export default router;

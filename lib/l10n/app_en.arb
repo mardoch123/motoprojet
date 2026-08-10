@@ -1,0 +1,137 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "MotoProjet",
+
+  "commonSave": "Save",
+  "commonCancel": "Cancel",
+  "commonClose": "Close",
+  "commonBack": "Back",
+  "commonNext": "Next",
+  "commonSkip": "Skip",
+  "commonFinish": "Finish",
+  "commonLoading": "Loading...",
+  "commonError": "Error",
+  "commonSuccess": "Success",
+  "commonConfirm": "Confirm",
+  "commonYes": "Yes",
+  "commonNo": "No",
+  "commonOK": "OK",
+  "commonRetry": "Retry",
+  "commonDelete": "Delete",
+  "commonEdit": "Edit",
+  "commonAdd": "Add",
+  "commonSearch": "Search",
+  "commonFilter": "Filter",
+  "commonSort": "Sort",
+  "commonRefresh": "Refresh",
+  "commonSettings": "Settings",
+  "commonHelp": "Help",
+  "commonAbout": "About",
+  "commonLogout": "Log out",
+  "commonFCFA": "CFA",
+  "commonToday": "Today",
+  "commonYesterday": "Yesterday",
+  "commonTomorrow": "Tomorrow",
+
+  "paymentNew": "New payment",
+  "paymentAmount": "Amount (CFA)",
+  "paymentAmountLabel": "Amount",
+  "paymentMode": "Payment method",
+  "paymentModeCash": "Cash",
+  "paymentModeMobileMoney": "Mobile Money",
+  "paymentModeKKiaPay": "KKiaPay",
+  "paymentDate": "Date",
+  "paymentDriver": "Driver",
+  "paymentDriverSelect": "Select a driver",
+  "paymentVehicle": "Vehicle",
+  "paymentVehicleSelect": "Select a vehicle",
+  "paymentRegisterCash": "RECORD CASH",
+  "paymentValidate": "SUBMIT",
+  "paymentSuccess": "Payment recorded!",
+  "paymentOffline": "Offline",
+  "paymentOfflineMessage": "Offline — only cash payment is available",
+  "paymentSyncPending": "Auto-sync when network returns",
+  "paymentRemainingBalance": "Remaining balance",
+  "paymentReimbursedPercent": "{percent}% reimbursed",
+  "@paymentReimbursedPercent": {
+    "placeholders": {
+      "percent": { "type": "String", "example": "45.5" }
+    }
+  },
+  "paymentNewPayment": "NEW PAYMENT",
+  "paymentQuickAmount": "{amount} F",
+  "@paymentQuickAmount": {
+    "placeholders": {
+      "amount": { "type": "String", "example": "5000" }
+    }
+  },
+
+  "dashboardTitle": "Dashboard",
+  "dashboardBalance": "Balance",
+  "dashboardEndDate": "End date",
+  "dashboardObjective": "Goal",
+  "dashboardDailyObjective": "Daily goal",
+  "dashboardDaysRemaining": "{days} days left",
+  "@dashboardDaysRemaining": {
+    "placeholders": {
+      "days": { "type": "int", "example": "45" }
+    }
+  },
+  "dashboardPaid": "Up to date",
+  "dashboardLate": "Late",
+  "dashboardDaysLate": "{days} days late",
+  "@dashboardDaysLate": {
+    "placeholders": {
+      "days": { "type": "int", "example": "3" }
+    }
+  },
+
+  "settingsTitle": "Settings",
+  "settingsAppearance": "Appearance",
+  "settingsFontSize": "Font size",
+  "settingsFontSizeSmall": "Small",
+  "settingsFontSizeNormal": "Normal",
+  "settingsFontSizeLarge": "Large",
+  "settingsFontSizeExtraLarge": "Extra large",
+  "settingsHighContrast": "High contrast",
+  "settingsHighContrastDescription": "Improves readability in bright sunlight",
+  "settingsLanguage": "Language",
+  "settingsLanguageFrench": "Français",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageFon": "Fon",
+  "settingsAccessibility": "Accessibility",
+  "settingsNotifications": "Notifications",
+  "settingsSecurity": "Security",
+  "settingsChangePin": "Change PIN",
+  "settingsAbout": "About MotoProjet",
+
+  "accessibilityPaymentButton": "Record a payment",
+  "accessibilityPaymentButtonHint": "Enter amount and submit",
+  "accessibilityLateButton": "Late",
+  "accessibilityLateButtonHint": "View current delays",
+  "accessibilityObjectiveButton": "Goal",
+  "accessibilityObjectiveButtonHint": "View your daily goal",
+  "accessibilityAmountField": "Amount in CFA francs",
+  "accessibilityDatePicker": "Select payment date",
+  "accessibilityDriverDropdown": "Choose a driver",
+  "accessibilityVehicleDropdown": "Choose a vehicle",
+  "accessibilityPaymentMode": "Choose payment method",
+  "accessibilitySubmitPayment": "Submit payment",
+  "accessibilitySyncIndicator": "{count} payments pending sync",
+  "@accessibilitySyncIndicator": {
+    "placeholders": {
+      "count": { "type": "int", "example": "3" }
+    }
+  },
+
+  "onboardingWelcome": "Welcome",
+  "onboardingSkip": "Skip",
+  "onboardingNext": "Next",
+  "onboardingFinish": "Get started",
+
+  "errorNetwork": "Connection error. Check your network.",
+  "errorGeneric": "An error occurred. Please try again.",
+  "errorRequired": "This field is required",
+  "errorInvalidAmount": "Invalid amount"
+}

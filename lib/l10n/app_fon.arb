@@ -1,0 +1,138 @@
+{
+  "@@locale": "fon",
+  "@@locale_note": "Langue locale du Bénin — traductions à compléter par un locuteur natif",
+
+  "appTitle": "MotoProjet",
+
+  "commonSave": "Jlɛ",
+  "commonCancel": "Hun",
+  "commonClose": "Hɔn",
+  "commonBack": "Yi nukɔn",
+  "commonNext": "Ji",
+  "commonSkip": "Hɔn",
+  "commonFinish": "Vɔ",
+  "commonLoading": "A wɛ nɔ tɛn...",
+  "commonError": "Waɖɛ",
+  "commonSuccess": "É jɛ",
+  "commonConfirm": "Xlɛ",
+  "commonYes": "Ɛɛn",
+  "commonNo": "Ɛɛn ǎ",
+  "commonOK": "OK",
+  "commonRetry": "Tɛn kpɔ",
+  "commonDelete": "Sɛn",
+  "commonEdit": "Kan",
+  "commonAdd": "Kpɔ",
+  "commonSearch": "Ba",
+  "commonFilter": "Kpɔ́n",
+  "commonSort": "Ðo",
+  "commonRefresh": "Vɛ",
+  "commonSettings": "Ðoɖo",
+  "commonHelp": "Alɔ",
+  "commonAbout": "Kanɖe",
+  "commonLogout": "Yi",
+  "commonFCFA": "CFA",
+  "commonToday": "Égbé",
+  "commonYesterday": "Aná",
+  "commonTomorrow": "Dǒ",
+
+  "paymentNew": "Nùɖoɖo yɔyɔ̌",
+  "paymentAmount": "Nùɖoɖo (CFA)",
+  "paymentAmountLabel": "Nùɖoɖo",
+  "paymentMode": "Ɖoɖo nukɔn",
+  "paymentModeCash": "Ga",
+  "paymentModeMobileMoney": "Mobile Money",
+  "paymentModeKKiaPay": "KKiaPay",
+  "paymentDate": "Azǎn",
+  "paymentDriver": "Vítɔ",
+  "paymentDriverSelect": "Nyí vítɔ ɖokpo",
+  "paymentVehicle": "Mɔtɔ",
+  "paymentVehicleSelect": "Nyí mɔtɔ ɖokpo",
+  "paymentRegisterCash": "JLƐ GA",
+  "paymentValidate": "XLƐ",
+  "paymentSuccess": "É jɛ!",
+  "paymentOffline": "Hwenukundi ǎ",
+  "paymentOfflineMessage": "Hwenukundi ǎ — ga ɖokpo wɛ",
+  "paymentSyncPending": "É na jɛ ɖo é gbe",
+  "paymentRemainingBalance": "Nùɖoɖo ɖo agbɛ̀",
+  "paymentReimbursedPercent": "{percent}% jɛ",
+  "@paymentReimbursedPercent": {
+    "placeholders": {
+      "percent": { "type": "String", "example": "45.5" }
+    }
+  },
+  "paymentNewPayment": "NÙƉOƉO YƆYƆ̌",
+  "paymentQuickAmount": "{amount} F",
+  "@paymentQuickAmount": {
+    "placeholders": {
+      "amount": { "type": "String", "example": "5000" }
+    }
+  },
+
+  "dashboardTitle": "Tɛn",
+  "dashboardBalance": "Agbɛ̀",
+  "dashboardEndDate": "Azǎn vɔɖo",
+  "dashboardObjective": "Nùɖoɖo",
+  "dashboardDailyObjective": "Nùɖoɖo azǎn ɖokpo",
+  "dashboardDaysRemaining": "Azǎn {days} ɖo tee",
+  "@dashboardDaysRemaining": {
+    "placeholders": {
+      "days": { "type": "int", "example": "45" }
+    }
+  },
+  "dashboardPaid": "É jɛ",
+  "dashboardLate": "Kpɔ́n",
+  "dashboardDaysLate": "Azǎn {days} kpɔ́n",
+  "@dashboardDaysLate": {
+    "placeholders": {
+      "days": { "type": "int", "example": "3" }
+    }
+  },
+
+  "settingsTitle": "Ðoɖo",
+  "settingsAppearance": "Wɛn",
+  "settingsFontSize": "Nùkplɔnkplɔn",
+  "settingsFontSizeSmall": "Kpɛví",
+  "settingsFontSizeNormal": "Sɔ",
+  "settingsFontSizeLarge": "Gan",
+  "settingsFontSizeExtraLarge": "Gan ɖo",
+  "settingsHighContrast": "Wɛn ɖaxo",
+  "settingsHighContrastDescription": "Na wɛn ɖo xwé gbe",
+  "settingsLanguage": "Gbè",
+  "settingsLanguageFrench": "Français",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageFon": "Fɔngbè",
+  "settingsAccessibility": "Sisɛ",
+  "settingsNotifications": "Nùɖeɖe",
+  "settingsSecurity": "Hwɛɖiɖo",
+  "settingsChangePin": "Kan PIN",
+  "settingsAbout": "Kanɖe MotoProjet",
+
+  "accessibilityPaymentButton": "Jlɛ nùɖoɖo",
+  "accessibilityPaymentButtonHint": "Ðo nùɖoɖo bo xlɛ",
+  "accessibilityLateButton": "Kpɔ́n",
+  "accessibilityLateButtonHint": "Pɔn kpɔ́n",
+  "accessibilityObjectiveButton": "Nùɖoɖo",
+  "accessibilityObjectiveButtonHint": "Pɔn nùɖoɖo towe",
+  "accessibilityAmountField": "Nùɖoɖo ɖo CFA",
+  "accessibilityDatePicker": "Nyí azǎn nùɖoɖo",
+  "accessibilityDriverDropdown": "Nyí vítɔ",
+  "accessibilityVehicleDropdown": "Nyí mɔtɔ",
+  "accessibilityPaymentMode": "Nyí ɖoɖo nukɔn",
+  "accessibilitySubmitPayment": "Xlɛ nùɖoɖo",
+  "accessibilitySyncIndicator": "Nùɖoɖo {count} ɖo tee",
+  "@accessibilitySyncIndicator": {
+    "placeholders": {
+      "count": { "type": "int", "example": "3" }
+    }
+  },
+
+  "onboardingWelcome": "Kɔnyí",
+  "onboardingSkip": "Hɔn",
+  "onboardingNext": "Ji",
+  "onboardingFinish": "Bɛ̀",
+
+  "errorNetwork": "Waɖɛ hwenukundi. Pɔn hwenukundi towe.",
+  "errorGeneric": "Waɖɛ ɖe wá. Tɛn kpɔ.",
+  "errorRequired": "É ɖó nùɖoɖo",
+  "errorInvalidAmount": "Nùɖoɖo ɖe ǎ"
+}

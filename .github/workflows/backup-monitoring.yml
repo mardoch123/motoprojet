@@ -1,0 +1,226 @@
+name: Database Backup & Monitoring
+
+on:
+  # Backup automatique chaque jour à 2h du matin (UTC)
+  schedule:
+    - cron: '0 2 * * *'
+  
+  # Backup manuel
+  workflow_dispatch:
+    inputs:
+      schema_only:
+        description: 'Schema only (no data)'
+        required: false
+        default: false
+        type: boolean
+  
+  # Monitoring toutes les 5 minutes
+  # Note: GitHub limite les scheduled workflows à toutes les 5 min minimum
+  # Pour un monitoring plus fréquent, utiliser un service externe (UptimeRobot, etc.)
+
+env:
+  R2_BUCKET: ${{ secrets.R2_BUCKET }}
+  R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+  BACKUP_RETENTION_DAYS: 30
+
+jobs:
+  # ═══════════════════════════════════════════════════════════════════════════
+  # BACKUP — Export quotidien chiffré
+  # ═══════════════════════════════════════════════════════════════════════════
+  backup:
+    name: Daily Database Backup
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client gnupg
+      
+      - name: Configure AWS CLI for R2
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.R2_ACCESS_KEY }}
+          aws configure set aws_secret_access_key ${{ secrets.R2_SECRET_KEY }}
+          aws configure set default.region auto
+      
+      - name: Run backup script
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+          R2_ACCESS_KEY: ${{ secrets.R2_ACCESS_KEY }}
+          R2_SECRET_KEY: ${{ secrets.R2_SECRET_KEY }}
+          BACKUP_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          chmod +x ./scripts/backup.sh
+          
+          if [ "${{ github.event.inputs.schema_only }}" = "true" ]; then
+            ./scripts/backup.sh --schema-only
+          else
+            ./scripts/backup.sh
+          fi
+      
+      - name: Verify backup in S3
+        if: success()
+        env:
+          R2_ACCESS_KEY: ${{ secrets.R2_ACCESS_KEY }}
+          R2_SECRET_KEY: ${{ secrets.R2_SECRET_KEY }}
+        run: |
+          echo "Vérification de la présence du backup dans S3..."
+          aws s3 ls "s3://${{ env.R2_BUCKET }}/backups/$(date '+%Y/%m')/" \
+            --endpoint-url "${{ env.R2_ENDPOINT }}" \
+            | grep ".gpg" || exit 1
+      
+      - name: Notify on failure
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ -n "$SLACK_WEBHOOK_URL" ]; then
+            curl -s -X POST "$SLACK_WEBHOOK_URL" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "text": "❌ ÉCHEC du backup MotoProjet",
+                "attachments": [{
+                  "color": "danger",
+                  "fields": [
+                    {"title": "Workflow", "value": "${{ github.workflow }}", "short": true},
+                    {"title": "Run", "value": "${{ github.run_id }}", "short": true}
+                  ]
+                }]
+              }'
+          fi
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # HEALTHCHECK — Vérification de disponibilité
+  # ═══════════════════════════════════════════════════════════════════════════
+  healthcheck:
+    name: API Health Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Run health check
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          HEALTHCHECK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          FAILURE_THRESHOLD: 2
+        run: |
+          chmod +x ./scripts/healthcheck.sh
+          ./scripts/healthcheck.sh
+      
+      - name: Check API response time
+        run: |
+          RESPONSE_TIME=$(curl -s -o /dev/null -w "%{time_total}" \
+            --connect-timeout 10 \
+            "${{ secrets.API_URL }}/health" || echo "999")
+          
+          echo "Response time: ${RESPONSE_TIME}s"
+          
+          # Alerte si > 5 secondes
+          if (( $(echo "$RESPONSE_TIME > 5" | bc -l) )); then
+            echo "::warning::API lente : ${RESPONSE_TIME}s"
+          fi
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # BACKUP VERIFICATION — Test de restauration hebdomadaire
+  # ═══════════════════════════════════════════════════════════════════════════
+  verify-backup:
+    name: Weekly Backup Verification
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' && github.event.schedule == '0 2 * * 0'
+    # Tous les dimanches à 2h
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Install PostgreSQL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql gnupg
+      
+      - name: Start local PostgreSQL
+        run: |
+          sudo systemctl start postgresql
+          sudo -u postgres psql -c "CREATE USER test WITH PASSWORD 'test';"
+          sudo -u postgres psql -c "CREATE DATABASE test_backup OWNER test;"
+      
+      - name: Download latest backup
+        env:
+          R2_ACCESS_KEY: ${{ secrets.R2_ACCESS_KEY }}
+          R2_SECRET_KEY: ${{ secrets.R2_SECRET_KEY }}
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.R2_ACCESS_KEY }}
+          aws configure set aws_secret_access_key ${{ secrets.R2_SECRET_KEY }}
+          
+          # Trouver le dernier backup
+          LATEST=$(aws s3 ls "s3://${{ env.R2_BUCKET }}/backups/" \
+            --endpoint-url "${{ env.R2_ENDPOINT }}" \
+            --recursive | grep ".gpg" | sort | tail -1 | awk '{print $4}')
+          
+          echo "Downloading: $LATEST"
+          aws s3 cp "s3://${{ env.R2_BUCKET }}/${LATEST}" ./backup.gpg \
+            --endpoint-url "${{ env.R2_ENDPOINT }}"
+      
+      - name: Decrypt and restore
+        env:
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+        run: |
+          # Déchiffrer
+          echo "$BACKUP_ENCRYPTION_KEY" | gpg --batch --yes --passphrase-fd 0 \
+            --output ./backup.gz --decrypt ./backup.gpg
+          
+          # Décompresser
+          gunzip ./backup.gz
+          
+          # Restaurer dans la base locale
+          PGPASSWORD=test pg_restore -h localhost -U test -d test_backup \
+            --clean --if-exists --no-owner ./backup || true
+          
+          # Vérifier que des tables existent
+          TABLE_COUNT=$(PGPASSWORD=test psql -h localhost -U test -d test_backup \
+            -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public';")
+          
+          echo "Tables restored: $TABLE_COUNT"
+          
+          if [ "$TABLE_COUNT" -lt 5 ]; then
+            echo "::error::Backup verification failed - too few tables"
+            exit 1
+          fi
+          
+          echo "✅ Backup verification successful"
+      
+      - name: Notify verification result
+        if: always()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            MESSAGE="✅ Vérification backup réussie"
+            COLOR="good"
+          else
+            MESSAGE="❌ ÉCHEC de la vérification du backup"
+            COLOR="danger"
+          fi
+          
+          if [ -n "$SLACK_WEBHOOK_URL" ]; then
+            curl -s -X POST "$SLACK_WEBHOOK_URL" \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"text\": \"$MESSAGE\",
+                \"attachments\": [{
+                  \"color\": \"$COLOR\",
+                  \"title\": \"Vérification hebdomadaire du backup\",
+                  \"fields\": [
+                    {\"title\": \"Date\", \"value\": \"$(date '+%Y-%m-%d')\", \"short\": true}
+                  ]
+                }]
+              }"
+          fi

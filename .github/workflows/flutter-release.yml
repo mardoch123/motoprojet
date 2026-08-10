@@ -1,0 +1,318 @@
+# =============================================================================
+# Flutter Release — Build, Distribute, Publish
+# Déclenché manuellement ou par tag (v*)
+# =============================================================================
+# Secrets requis dans GitHub :
+#   - ANDROID_KEYSTORE_BASE64     : Keystore de signature Android (base64)
+#   - ANDROID_KEYSTORE_PASSWORD   : Mot de passe du keystore
+#   - ANDROID_KEY_ALIAS           : Alias de la clé
+#   - ANDROID_KEY_PASSWORD        : Mot de passe de la clé
+#   - FIREBASE_SERVICE_ACCOUNT    : JSON du compte de service Firebase
+#   - PLAY_STORE_SERVICE_ACCOUNT  : JSON du compte de service Google Play
+#   - APP_STORE_CONNECT_KEY       : Clé API App Store Connect (p8)
+#   - APP_STORE_KEY_ID            : Key ID Apple
+#   - APP_STORE_ISSUER_ID         : Issuer ID Apple
+# =============================================================================
+name: Flutter Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # v1.0.0, v1.2.0-beta.1, etc.
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (ex: 1.2.0)'
+        required: true
+        type: string
+      build_number:
+        description: 'Build number (ex: 12)'
+        required: true
+        type: string
+      target:
+        description: 'Cible'
+        required: true
+        default: 'all'
+        type: choice
+        options: [all, android, ios, firebase-only]
+
+env:
+  FLUTTER_VERSION: ${{ github.event.inputs.version || github.ref_name }}
+  FLUTTER_BUILD_NUMBER: ${{ github.event.inputs.build_number || '1' }}
+
+jobs:
+  # ─── 1. Préparation ────────────────────────────────────────────────────────
+  prepare:
+    name: Prepare Release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      build_number: ${{ steps.version.outputs.build_number }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract version
+        id: version
+        run: |
+          # Extraire la version depuis le tag ou l'input
+          VERSION="${{ github.event.inputs.version || github.ref_name }}"
+          VERSION="${VERSION#v}"  # Retirer le prefix 'v'
+          BUILD="${{ github.event.inputs.build_number || '1' }}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "build_number=$BUILD" >> $GITHUB_OUTPUT
+          echo "Release: v$VERSION+$BUILD"
+
+  # ─── 2. Build Android (AAB Release) ────────────────────────────────────────
+  build-android:
+    name: Build Android (AAB)
+    runs-on: ubuntu-latest
+    needs: prepare
+    if: ${{ github.event.inputs.target != 'ios' && github.event.inputs.target != 'firebase-only' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Create .env file
+        run: |
+          echo "API_BASE_URL=https://api.motoprojet.bj" > .env
+          echo "API_TIMEOUT=30000" >> .env
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Decode Android keystore
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+
+      - name: Create key.properties
+        run: |
+          cat > android/key.properties <<EOF
+          storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
+          keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
+          storeFile=keystore.jks
+          EOF
+
+      - name: Update version in pubspec.yaml
+        run: |
+          VERSION="${{ needs.prepare.outputs.version }}"
+          BUILD="${{ needs.prepare.outputs.build_number }}"
+          sed -i "s/^version:.*/version: ${VERSION}+${BUILD}/" pubspec.yaml
+
+      - name: Build App Bundle (AAB)
+        run: flutter build appbundle --release
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+      - name: Also build APK for testing
+        run: flutter build apk --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk-release
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+
+  # ─── 3. Build iOS (IPA Release) ────────────────────────────────────────────
+  build-ios:
+    name: Build iOS (IPA)
+    runs-on: macos-latest
+    needs: prepare
+    if: ${{ github.event.inputs.target != 'android' && github.event.inputs.target != 'firebase-only' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Create .env file
+        run: |
+          echo "API_BASE_URL=https://api.motoprojet.bj" > .env
+          echo "API_TIMEOUT=30000" >> .env
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Update version in pubspec.yaml
+        run: |
+          VERSION="${{ needs.prepare.outputs.version }}"
+          BUILD="${{ needs.prepare.outputs.build_number }}"
+          sed -i '' "s/^version:.*/version: ${VERSION}+${BUILD}/" pubspec.yaml
+
+      - name: Install Apple Certificate
+        uses: apple-actions/import-certificate@v2
+        with:
+          p12-file-base64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}
+          p12-password: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}
+
+      - name: Install Provisioning Profile
+        run: |
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo "${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}" | base64 --decode > ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+
+      - name: Build iOS (no codesign for CI)
+        run: |
+          flutter build ios --release --no-codesign
+        continue-on-error: true
+
+      - name: Build IPA
+        run: |
+          flutter build ipa --release \
+            --export-options-plist=ios/ExportOptions.plist
+        continue-on-error: true
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-ipa
+          path: build/ios/ipa/*.ipa
+          retention-days: 30
+
+  # ─── 4. Distribution Firebase App Distribution ─────────────────────────────
+  firebase-distribute:
+    name: Firebase App Distribution
+    runs-on: ubuntu-latest
+    needs: [prepare, build-android]
+    if: always() && needs.build-android.result == 'success'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: android-apk-release
+          path: artifacts/
+
+      - name: Setup Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy to Firebase App Distribution
+        run: |
+          firebase appdistribution:distribute artifacts/app-release.apk \
+            --app "${{ secrets.FIREBASE_ANDROID_APP_ID }}" \
+            --groups "testers,internal" \
+            --release-notes "Version ${{ needs.prepare.outputs.version }} (build ${{ needs.prepare.outputs.build_number }}) — déployée via CI"
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        continue-on-error: true
+
+  # ─── 5. Publication Google Play Store ──────────────────────────────────────
+  publish-play-store:
+    name: Publish to Google Play Store
+    runs-on: ubuntu-latest
+    needs: [prepare, build-android, firebase-distribute]
+    if: |
+      always() &&
+      needs.build-android.result == 'success' &&
+      (startsWith(github.ref, 'refs/tags/v') || github.event.inputs.target == 'all')
+
+    steps:
+      - name: Download AAB
+        uses: actions/download-artifact@v4
+        with:
+          name: android-aab
+          path: artifacts/
+
+      - name: Authenticate Google Play
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT }}
+
+      - name: Upload to Google Play (Internal Track)
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT }}
+          packageName: com.motoprojet.motoprojet
+          releaseFiles: artifacts/app-release.aab
+          track: internal
+          status: draft
+        continue-on-error: true
+
+  # ─── 6. Publication Apple App Store ────────────────────────────────────────
+  publish-app-store:
+    name: Publish to Apple App Store
+    runs-on: macos-latest
+    needs: [prepare, build-ios]
+    if: |
+      always() &&
+      needs.build-ios.result == 'success' &&
+      (startsWith(github.ref, 'refs/tags/v') || github.event.inputs.target == 'all')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download IPA
+        uses: actions/download-artifact@v4
+        with:
+          name: ios-ipa
+          path: artifacts/
+
+      - name: Upload to App Store Connect
+        run: |
+          xcrun altool --upload-app \
+            --type ios \
+            --file artifacts/*.ipa \
+            --apiKey "${{ secrets.APP_STORE_KEY_ID }}" \
+            --apiIssuer "${{ secrets.APP_STORE_ISSUER_ID }}"
+        continue-on-error: true
+
+  # ─── 7. GitHub Release ─────────────────────────────────────────────────────
+  github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [prepare, build-android, build-ios]
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: MotoProjet v${{ needs.prepare.outputs.version }}
+          draft: true
+          prerelease: ${{ contains(needs.prepare.outputs.version, '-') }}
+          files: |
+            artifacts/android-apk-release/app-release.apk
+            artifacts/android-aab/app-release.aab
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

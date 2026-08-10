@@ -1,0 +1,159 @@
+{
+  "@@locale": "fr",
+  "@@context": "AppLocalizations",
+
+  "appTitle": "MotoProjet",
+  "@appTitle": {
+    "description": "Nom de l'application"
+  },
+
+  "commonSave": "Enregistrer",
+  "commonCancel": "Annuler",
+  "commonClose": "Fermer",
+  "commonBack": "Retour",
+  "commonNext": "Suivant",
+  "commonSkip": "Passer",
+  "commonFinish": "Terminer",
+  "commonLoading": "Chargement...",
+  "commonError": "Erreur",
+  "commonSuccess": "Succès",
+  "commonConfirm": "Confirmer",
+  "commonYes": "Oui",
+  "commonNo": "Non",
+  "commonOK": "OK",
+  "commonRetry": "Réessayer",
+  "commonDelete": "Supprimer",
+  "commonEdit": "Modifier",
+  "commonAdd": "Ajouter",
+  "commonSearch": "Rechercher",
+  "commonFilter": "Filtrer",
+  "commonSort": "Trier",
+  "commonRefresh": "Actualiser",
+  "commonSettings": "Paramètres",
+  "commonHelp": "Aide",
+  "commonAbout": "À propos",
+  "commonLogout": "Déconnexion",
+  "commonFCFA": "FCFA",
+  "commonToday": "Aujourd'hui",
+  "commonYesterday": "Hier",
+  "commonTomorrow": "Demain",
+
+  "paymentNew": "Nouveau paiement",
+  "@paymentNew": {
+    "description": "Titre de l'écran de saisie de paiement"
+  },
+  "paymentAmount": "Montant (FCFA)",
+  "paymentAmountLabel": "Montant",
+  "paymentMode": "Mode de paiement",
+  "paymentModeCash": "Espèces",
+  "paymentModeMobileMoney": "Mobile Money",
+  "paymentModeKKiaPay": "KKiaPay",
+  "paymentDate": "Date",
+  "paymentDriver": "Chauffeur",
+  "paymentDriverSelect": "Sélectionner un chauffeur",
+  "paymentVehicle": "Véhicule",
+  "paymentVehicleSelect": "Sélectionner un véhicule",
+  "paymentRegisterCash": "ENREGISTRER ESPÈCES",
+  "paymentValidate": "VALIDER",
+  "paymentSuccess": "Paiement enregistré !",
+  "paymentOffline": "Hors-ligne",
+  "paymentOfflineMessage": "Hors-ligne — seul le paiement en espèces est disponible",
+  "paymentSyncPending": "Synchronisation automatique dès retour réseau",
+  "paymentRemainingBalance": "Solde restant",
+  "paymentReimbursedPercent": "{percent}% remboursé",
+  "@paymentReimbursedPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String",
+        "example": "45.5"
+      }
+    }
+  },
+  "paymentNewPayment": "NOUVEAU PAIEMENT",
+  "paymentQuickAmount": "{amount} F",
+  "@paymentQuickAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "5000"
+      }
+    }
+  },
+
+  "dashboardTitle": "Tableau de bord",
+  "dashboardBalance": "Solde",
+  "dashboardEndDate": "Date de fin",
+  "dashboardObjective": "Objectif",
+  "dashboardDailyObjective": "Objectif journalier",
+  "dashboardDaysRemaining": "{days} jours restants",
+  "@dashboardDaysRemaining": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "45"
+      }
+    }
+  },
+  "dashboardPaid": "À jour",
+  "dashboardLate": "En retard",
+  "dashboardDaysLate": "{days} jours de retard",
+  "@dashboardDaysLate": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+
+  "settingsTitle": "Paramètres",
+  "settingsAppearance": "Apparence",
+  "settingsFontSize": "Taille de police",
+  "settingsFontSizeSmall": "Petit",
+  "settingsFontSizeNormal": "Normal",
+  "settingsFontSizeLarge": "Grand",
+  "settingsFontSizeExtraLarge": "Très grand",
+  "settingsHighContrast": "Contraste renforcé",
+  "settingsHighContrastDescription": "Améliore la lisibilité en plein soleil",
+  "settingsLanguage": "Langue",
+  "settingsLanguageFrench": "Français",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageFon": "Fon",
+  "settingsAccessibility": "Accessibilité",
+  "settingsNotifications": "Notifications",
+  "settingsSecurity": "Sécurité",
+  "settingsChangePin": "Changer le code PIN",
+  "settingsAbout": "À propos de MotoProjet",
+
+  "accessibilityPaymentButton": "Enregistrer un paiement",
+  "accessibilityPaymentButtonHint": "Saisir le montant et valider",
+  "accessibilityLateButton": "Retard",
+  "accessibilityLateButtonHint": "Voir les retards en cours",
+  "accessibilityObjectiveButton": "Objectif",
+  "accessibilityObjectiveButtonHint": "Voir votre objectif journalier",
+  "accessibilityAmountField": "Montant en francs CFA",
+  "accessibilityDatePicker": "Sélectionner la date du paiement",
+  "accessibilityDriverDropdown": "Choisir un chauffeur",
+  "accessibilityVehicleDropdown": "Choisir un véhicule",
+  "accessibilityPaymentMode": "Choisir le mode de paiement",
+  "accessibilitySubmitPayment": "Valider le paiement",
+  "accessibilitySyncIndicator": "{count} paiements en attente de synchronisation",
+  "@accessibilitySyncIndicator": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+
+  "onboardingWelcome": "Bienvenue",
+  "onboardingSkip": "Passer",
+  "onboardingNext": "Suivant",
+  "onboardingFinish": "Commencer",
+
+  "errorNetwork": "Erreur de connexion. Vérifiez votre réseau.",
+  "errorGeneric": "Une erreur est survenue. Veuillez réessayer.",
+  "errorRequired": "Ce champ est requis",
+  "errorInvalidAmount": "Montant invalide"
+}
