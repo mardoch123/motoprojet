@@ -21,9 +21,11 @@ import 'package:motoprojet/features/paiements/presentation/screens/historique_pa
 import 'package:motoprojet/features/paiements/presentation/screens/pending_sync_screen.dart';
 import 'package:motoprojet/features/dashboard/presentation/screens/super_admin_dashboard.dart';
 import 'package:motoprojet/features/dashboard/presentation/screens/gestionnaire_dashboard.dart';
+import 'package:motoprojet/features/dashboard/presentation/screens/chauffeur_dashboard_screen.dart';
 import 'package:motoprojet/features/incidents/presentation/screens/incident_form_screen.dart';
 import 'package:motoprojet/features/incidents/presentation/screens/incident_history_screen.dart';
 import 'package:motoprojet/features/vehicules/presentation/screens/vehicule_detail_screen.dart';
+import 'package:motoprojet/features/vehicules/presentation/screens/vehicule_form_screen.dart';
 import 'package:motoprojet/features/rappels/presentation/screens/rappels_screen.dart';
 import 'package:motoprojet/features/ia/presentation/screens/ia_screen.dart';
 import 'package:motoprojet/features/simulation/presentation/screens/simulation_screen.dart';
@@ -39,13 +41,31 @@ import 'package:motoprojet/shared/widgets/app_shell.dart';
 import 'package:motoprojet/core/monitoring/usage_tracking_service.dart';
 import 'package:motoprojet/shared/widgets/inactivity_detector.dart';
 
-/// Configuration du routeur avec redirection selon le rôle
-final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+/// ChangeNotifier pour notifier GoRouter des changements d'état d'auth
+/// sans rebuild le routerProvider (évite l'erreur "modify provider during build")
+class _AuthRefreshNotifier extends ChangeNotifier {
+  void notify() => notifyListeners();
+}
 
-  return GoRouter(
+/// Configuration du routeur avec redirection selon le rôle
+///
+/// IMPORTANT : On utilise ref.listen + refreshListenable au lieu de ref.watch
+/// pour éviter de rebuild le GoRouter pendant le widget tree build.
+final routerProvider = Provider<GoRouter>((ref) {
+  // ChangeNotifier pour notifier GoRouter des changements d'auth
+  final refreshNotifier = _AuthRefreshNotifier();
+
+  // Écouter les changements d'auth sans watcher (pas de rebuild du provider)
+  ref.listen<AuthState>(authProvider, (prev, next) {
+    refreshNotifier.notify();
+  });
+
+  final router = GoRouter(
     initialLocation: '/',
+    refreshListenable: refreshNotifier,
     redirect: (context, state) {
+      // Utiliser ref.read au lieu de ref.watch dans le redirect
+      final authState = ref.read(authProvider);
       final isLoggedIn = authState.isAuthenticated;
       final isSplash = state.matchedLocation == '/';
       final currentPath = state.matchedLocation;
@@ -240,6 +260,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             ),
           ),
           GoRoute(
+            path: '/vehicules/create',
+            builder: (context, state) => const VehiculeFormScreen(),
+          ),
+          GoRoute(
             path: '/vehicules/:id',
             builder: (context, state) => VehiculeDetailScreen(
               vehiculeId: state.pathParameters['id']!,
@@ -313,6 +337,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             ),
           ),
           GoRoute(
+            path: '/vehicules/create',
+            builder: (context, state) => const VehiculeFormScreen(),
+          ),
+          GoRoute(
             path: '/vehicules/:id',
             builder: (context, state) => VehiculeDetailScreen(
               vehiculeId: state.pathParameters['id']!,
@@ -347,7 +375,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: '/chauffeur',
-            builder: (context, state) => const ChauffeurDashboard(),
+            builder: (context, state) => const ChauffeurDashboardScreen(),
           ),
           GoRoute(
             path: '/chauffeur/paiements',
@@ -364,6 +392,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/chauffeur/contrats',
             builder: (context, state) => const ContratsScreen(),
+          ),
+          GoRoute(
+            path: '/vehicules/create',
+            builder: (context, state) => const VehiculeFormScreen(),
           ),
           GoRoute(
             path: '/vehicules/:id',
@@ -390,6 +422,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
+
+  ref.onDispose(() {
+    refreshNotifier.dispose();
+  });
+
+  return router;
 });
 
 /// Retourne la route du dashboard selon le rôle
@@ -417,29 +455,5 @@ String _onboardingRoute(String? role) {
       return '/onboarding/chauffeur';
     default:
       return '/login';
-  }
-}
-
-/// Dashboard simplifié pour le chauffeur
-class ChauffeurDashboard extends StatelessWidget {
-  const ChauffeurDashboard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Mon espace')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.directions_car, size: 80, color: Colors.green),
-            const SizedBox(height: 16),
-            Text('Bienvenue chauffeur', style: Theme.of(context).textTheme.headlineSmall),
-            const SizedBox(height: 8),
-            const Text('Consultez vos paiements et rappels'),
-          ],
-        ),
-      ),
-    );
   }
 }

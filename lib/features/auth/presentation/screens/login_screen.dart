@@ -38,7 +38,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     try {
       final apiClient = ref.read(apiClientProvider);
-      final response = await apiClient.post('/api/v1/auth/login', data: {
+      final response = await apiClient.post('/auth/login', data: {
         'telephone': _telephoneController.text.trim(),
         'pin': _pinController.text,
       });
@@ -69,7 +69,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         });
         return;
       }
-      // Sinon le router redirect gère la redirection vers le dashboard
+
+      // Navigation explicite vers le dashboard selon le rôle
+      final role = data['role'] as String;
+      final targetRoute = switch (role) {
+        'super_admin' => '/admin',
+        'gestionnaire' => '/gestionnaire',
+        'chauffeur' => '/chauffeur',
+        _ => '/login',
+      };
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) context.go(targetRoute);
+      });
     } catch (e) {
       if (!mounted) return;
       final l10n = AppLocalizations.of(context);
@@ -79,6 +90,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  /// Connexion rapide : remplit les champs et lance la connexion
+  Future<void> _quickLogin(String telephone, String pin) async {
+    _telephoneController.text = telephone;
+    _pinController.text = pin;
+    await _login();
   }
 
   @override
@@ -180,6 +198,44 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   TextButton(
                     onPressed: () => context.go('/forgot-pin'),
                     child: Text(l10n.authForgotPin),
+                  ),
+                  const SizedBox(height: 24),
+                  const Divider(),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Connexion rapide (test)',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _isLoading ? null : () => _quickLogin('+22934567890', '1234'),
+                          icon: const Icon(Icons.directions_bike, size: 18),
+                          label: const Text('Chauffeur', style: TextStyle(fontSize: 12)),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppTheme.successColor,
+                            side: const BorderSide(color: AppTheme.successColor),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _isLoading ? null : () => _quickLogin('+22912345678', '1234'),
+                          icon: const Icon(Icons.admin_panel_settings, size: 18),
+                          label: const Text('Super Admin', style: TextStyle(fontSize: 12)),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppTheme.primaryColor,
+                            side: const BorderSide(color: AppTheme.primaryColor),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -49,7 +49,7 @@ class _OnboardingGestionnaireScreenState extends ConsumerState<OnboardingGestion
     setState(() => _isCompleting = true);
     try {
       final apiClient = ref.read(apiClientProvider);
-      await apiClient.post('/api/v1/auth/onboarding/complete');
+      await apiClient.post('/auth/onboarding/complete');
     } catch (_) {}
     await ref.read(authProvider.notifier).completeOnboarding();
     WidgetsBinding.instance.addPostFrameCallback((_) {

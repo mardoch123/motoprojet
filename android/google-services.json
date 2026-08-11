@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "375647446039",
+    "project_id": "motofinance-148e9",
+    "storage_bucket": "motofinance-148e9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:375647446039:android:7723b056973c5cd76d2852",
+        "android_client_info": {
+          "package_name": "com.motoprojet.motoprojet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1M00aC0zjtAjxAhcbsEdC9Y76kHgL7qU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

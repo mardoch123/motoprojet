@@ -31,7 +31,7 @@ class _ResetPinScreenState extends ConsumerState<ResetPinScreen> {
 
     try {
       final apiClient = ref.read(apiClientProvider);
-      final response = await apiClient.get('/api/v1/auth/chauffeurs-for-reset');
+      final response = await apiClient.get('/auth/chauffeurs-for-reset');
       final data = response.data['data'] as List<dynamic>;
       setState(() {
         _chauffeurs = data.cast<Map<String, dynamic>>();
@@ -63,7 +63,7 @@ class _ResetPinScreenState extends ConsumerState<ResetPinScreen> {
 
     try {
       final apiClient = ref.read(apiClientProvider);
-      final response = await apiClient.post('/api/v1/auth/reset-pin', data: {
+      final response = await apiClient.post('/auth/reset-pin', data: {
         'user_id': userId,
       });
 

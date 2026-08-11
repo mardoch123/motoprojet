@@ -99,7 +99,7 @@ class _OnboardingSuperAdminScreenState extends ConsumerState<OnboardingSuperAdmi
 
       // Sauvegarder la configuration entreprise
       try {
-        await apiClient.post('/api/v1/dashboard/config', data: {
+        await apiClient.post('/dashboard/config', data: {
           'nom_entreprise': _nomEntrepriseController.text.trim(),
           'prix_moto': double.tryParse(_prixMotoController.text) ?? 500000,
           'prix_voiture': double.tryParse(_prixVoitureController.text) ?? 3000000,
@@ -115,7 +115,7 @@ class _OnboardingSuperAdminScreenState extends ConsumerState<OnboardingSuperAdmi
       // Créer le gestionnaire si demandé
       if (_creerGestionnaire && _gestTelephoneController.text.isNotEmpty) {
         try {
-          await apiClient.post('/api/v1/auth/register', data: {
+          await apiClient.post('/auth/register', data: {
             'telephone': _gestTelephoneController.text.trim(),
             'nom': _gestNomController.text.trim(),
             'role': 'gestionnaire',
@@ -124,7 +124,7 @@ class _OnboardingSuperAdminScreenState extends ConsumerState<OnboardingSuperAdmi
       }
 
       // Marquer l'onboarding comme terminé
-      await apiClient.post('/api/v1/auth/onboarding/complete');
+      await apiClient.post('/auth/onboarding/complete');
       await ref.read(authProvider.notifier).completeOnboarding();
 
       if (mounted) {

@@ -7,6 +7,13 @@ import 'package:motoprojet/core/utils/app_logger.dart';
 import 'package:motoprojet/shared/models/paiement_model.dart';
 import 'package:uuid/uuid.dart';
 
+/// Parse un montant API (peut être num ou String depuis PostgreSQL)
+double _toDouble(dynamic value) {
+  if (value == null) return 0;
+  if (value is num) return value.toDouble();
+  return double.tryParse(value.toString()) ?? 0;
+}
+
 /// Repository qui gère la bascule online/offline de façon transparente.
 ///
 /// Diagramme de séquence :
@@ -85,7 +92,7 @@ class PaiementRepository {
     String mode = 'kkiapay',
   }) async {
     try {
-      final response = await apiClient.post('/api/v1/paiements', data: {
+      final response = await apiClient.post('/paiements', data: {
         'chauffeur_id': chauffeurId,
         'vehicule_id': vehiculeId,
         'montant': montant,
@@ -104,10 +111,10 @@ class PaiementRepository {
       return PaiementResult(
         paiement: PaiementModel.fromJson(paiementData),
         solde: SoldeInfo(
-          totalVerseAvant: (soldeData['total_verse_avant'] as num).toDouble(),
-          montantPaye: (soldeData['montant_paye'] as num).toDouble(),
-          nouveauSolde: (soldeData['nouveau_solde'] as num).toDouble(),
-          pourcentageRembourse: (soldeData['pourcentage_rembourse'] as num).toDouble(),
+          totalVerseAvant: _toDouble(soldeData['total_verse_avant']),
+          montantPaye: _toDouble(soldeData['montant_paye']),
+          nouveauSolde: _toDouble(soldeData['nouveau_solde']),
+          pourcentageRembourse: _toDouble(soldeData['pourcentage_rembourse']),
         ),
         isOffline: false,
       );
@@ -173,7 +180,7 @@ class PaiementRepository {
         if (dateFin != null) params['date_fin'] = dateFin;
         if (mode != null) params['mode'] = mode;
 
-        final response = await apiClient.get('/api/v1/paiements', queryParameters: params);
+        final response = await apiClient.get('/paiements', queryParameters: params);
         final responseData = response.data as Map<String, dynamic>;
         return (responseData['data'] as List)
             .map((e) => PaiementModel.fromJson(e as Map<String, dynamic>))

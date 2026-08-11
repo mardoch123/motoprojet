@@ -27,7 +27,7 @@ class KkiapayService {
     if (_config != null) return _config!;
 
     try {
-      final response = await _apiClient.get('/api/v1/kkiapay/config');
+      final response = await _apiClient.get('/kkiapay/config');
       final data = response.data as Map<String, dynamic>;
       final configData = data['data'] as Map<String, dynamic>;
 
@@ -57,7 +57,7 @@ class KkiapayService {
     String? date,
   }) async {
     try {
-      final response = await _apiClient.post('/api/v1/kkiapay/paiements/initier', data: {
+      final response = await _apiClient.post('/kkiapay/paiements/initier', data: {
         'vehicule_id': vehiculeId,
         'montant': montant,
         if (date != null) 'date': date,
@@ -90,7 +90,7 @@ class KkiapayService {
     String? date,
   }) async {
     try {
-      final response = await _apiClient.post('/api/v1/kkiapay/paiements/verifier', data: {
+      final response = await _apiClient.post('/kkiapay/paiements/verifier', data: {
         'transaction_id': transactionId,
         'vehicule_id': vehiculeId,
         'montant': montant,
@@ -111,10 +111,10 @@ class KkiapayService {
           success: true,
           paiementId: paiementData['id'] as String?,
           solde: SoldeKkiapay(
-            totalVerseAvant: (soldeData['total_verse_avant'] as num).toDouble(),
-            montantPaye: (soldeData['montant_paye'] as num).toDouble(),
-            nouveauSolde: (soldeData['nouveau_solde'] as num).toDouble(),
-            pourcentageRembourse: (soldeData['pourcentage_rembourse'] as num).toDouble(),
+            totalVerseAvant: double.tryParse(soldeData['total_verse_avant'].toString()) ?? 0,
+            montantPaye: double.tryParse(soldeData['montant_paye'].toString()) ?? 0,
+            nouveauSolde: double.tryParse(soldeData['nouveau_solde'].toString()) ?? 0,
+            pourcentageRembourse: double.tryParse(soldeData['pourcentage_rembourse'].toString()) ?? 0,
           ),
           message: data['message'] as String? ?? 'Paiement confirmé',
         );

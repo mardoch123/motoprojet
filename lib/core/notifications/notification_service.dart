@@ -20,12 +20,10 @@ class NotificationService {
   StreamSubscription? _messageSubscription;
   String? _fcmToken;
 
-  /// Initialise Firebase et les notifications
+  /// Initialise les notifications push Firebase
+  /// Firebase doit déjà être initialisé dans main() via Firebase.initializeApp()
   Future<void> init() async {
     try {
-      // Initialiser Firebase (si pas déjà fait)
-      await Firebase.initializeApp();
-
       // Configurer les notifications locales
       await _initLocalNotifications();
 

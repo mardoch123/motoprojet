@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:motoprojet/core/theme/app_theme.dart';
 import '../penalites_provider.dart';
 
 class PenalitesConfigScreen extends ConsumerStatefulWidget {
@@ -228,6 +229,10 @@ class _PenalitesConfigScreenState extends ConsumerState<PenalitesConfigScreen> w
                   onSelected: (_) {
                     ref.read(penalitesProvider.notifier).chargerPenalites();
                   },
+                  selectedColor: AppTheme.successColor,
+                  labelStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                  checkmarkColor: Colors.white,
+                  side: BorderSide.none,
                 ),
               ),
               const SizedBox(width: 8),
@@ -238,6 +243,9 @@ class _PenalitesConfigScreenState extends ConsumerState<PenalitesConfigScreen> w
                   onSelected: (_) {
                     ref.read(penalitesProvider.notifier).chargerPenalites(statut: 'active');
                   },
+                  backgroundColor: Colors.grey.shade200,
+                  labelStyle: TextStyle(color: Colors.grey.shade700),
+                  side: BorderSide.none,
                 ),
               ),
             ],

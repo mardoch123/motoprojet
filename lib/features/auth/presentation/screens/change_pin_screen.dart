@@ -40,7 +40,7 @@ class _ChangePinScreenState extends ConsumerState<ChangePinScreen> {
 
     try {
       final apiClient = ref.read(apiClientProvider);
-      await apiClient.post('/api/v1/auth/change-pin', data: {
+      await apiClient.post('/auth/change-pin', data: {
         'old_pin': _oldPinController.text,
         'new_pin': _newPinController.text,
         'confirm_pin': _confirmPinController.text,

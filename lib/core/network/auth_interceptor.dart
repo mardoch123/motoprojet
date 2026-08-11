@@ -8,7 +8,7 @@ import 'package:motoprojet/core/utils/app_logger.dart';
 ///
 /// Comportement :
 /// 1. Ajoute le JWT dans le header `Authorization: Bearer <token>`
-/// 2. Si une 401 est reçue → tente un refresh via `/api/v1/auth/refresh`
+/// 2. Si une 401 est reçue → tente un refresh via `/auth/refresh`
 /// 3. Si le refresh réussit → met à jour le token et rejoue la requête
 /// 4. Si le refresh échoue → propage l'erreur (l'app redirigera vers le login)
 ///
@@ -66,7 +66,7 @@ class AuthInterceptor extends QueuedInterceptor {
 
       // Appeler l'endpoint de refresh avec un Dio isolé (pas d'intercepteurs)
       final response = await _refreshDio.post(
-        '/api/v1/auth/refresh',
+        '/auth/refresh',
         data: {'refresh_token': refreshToken},
       );
 

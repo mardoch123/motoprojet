@@ -216,6 +216,7 @@ class _PaiementsScreenState extends ConsumerState<PaiementsScreen> {
             alignment: Alignment.topRight,
             children: [
               Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(icon, color: color, size: 28),
                   const SizedBox(height: 6),

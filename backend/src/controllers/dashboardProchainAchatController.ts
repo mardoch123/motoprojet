@@ -28,21 +28,21 @@ export async function getProchainAchat(_req: AuthRequest, res: Response, next: N
     // Total encaissé
     const { rows: cashRows } = await pool.query(`
       SELECT COALESCE(SUM(montant), 0)::float AS total
-      FROM paiements WHERE statut = 'confirme'
+      FROM paiements
     `);
     const totalEncaisse = cashRows[0]?.total ?? 0;
 
     // Salaires versés
     const { rows: salaireRows } = await pool.query(`
       SELECT COALESCE(SUM(montant), 0)::float AS total
-      FROM salaires WHERE statut = 'verse'
+      FROM salaires
     `);
     const totalSalaires = salaireRows[0]?.total ?? 0;
 
     // Dépenses incidents (coûts de réparation)
     const { rows: incidentRows } = await pool.query(`
-      SELECT COALESCE(SUM(cout_reparation), 0)::float AS total
-      FROM incidents WHERE cout_reparation > 0
+      SELECT COALESCE(SUM(cout), 0)::float AS total
+      FROM incidents WHERE cout > 0
     `);
     const totalDepenses = incidentRows[0]?.total ?? 0;
 
@@ -96,8 +96,7 @@ export async function getProchainAchat(_req: AuthRequest, res: Response, next: N
         COALESCE(SUM(montant), 0)::float AS total_30j,
         COUNT(DISTINCT DATE(date))::int AS nb_jours
       FROM paiements
-      WHERE statut = 'confirme'
-        AND date >= CURRENT_DATE - INTERVAL '30 days'
+      WHERE date >= CURRENT_DATE - INTERVAL '30 days'
     `);
     const total30j = rythmeRows[0]?.total_30j ?? 0;
     const nbJours = rythmeRows[0]?.nb_jours ?? 1;

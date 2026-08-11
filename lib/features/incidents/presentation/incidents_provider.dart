@@ -157,13 +157,15 @@ class IncidentsNotifier extends StateNotifier<IncidentsState> {
     }
   }
 
-  /// Crée un incident avec photos compressées
+  /// Crée un incident avec photos compressées et GPS
   Future<IncidentModel?> createIncident({
     required String vehiculeId,
     required String type,
     required String severity,
     required String lieu,
     required String description,
+    required double latitude,
+    required double longitude,
     List<File> photos = const [],
   }) async {
     state = state.copyWith(isLoading: true, clearError: true);
@@ -184,6 +186,8 @@ class IncidentsNotifier extends StateNotifier<IncidentsState> {
         'description': description,
         'photo_urls': photoUrls,
         if (photoUrls.isNotEmpty) 'photo_url': photoUrls.first,
+        'latitude': latitude,
+        'longitude': longitude,
       });
 
       final incident = IncidentModel.fromJson(response.data['data'] as Map<String, dynamic>);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// DESIGN SYSTEM — MotoProjet
@@ -188,9 +189,13 @@ class AppShadows {
 /// - Titres en FontWeight.w700 (Bold) pour un look premium
 /// - Corps de texte en w400 (Regular) pour la légèreté
 /// - Tailles en paliers clairs : 12 / 14 / 16 / 20 / 26 / 32
+/// - Police : Poppins (moderne, pro et fun)
 ///
 class AppTypography {
   AppTypography._();
+
+  // ─── Police de base ──────────────────────────────────────────────────────
+  static String get _fontFamily => GoogleFonts.poppins().fontFamily!;
 
   // ─── Titres ──────────────────────────────────────────────────────────────
   static const TextStyle displayLg = TextStyle(
@@ -237,6 +242,18 @@ class AppTypography {
     fontSize: 12,
     fontWeight: FontWeight.w400,
     height: 1.5,
+  );
+
+  static const TextStyle bodyXs = TextStyle(
+    fontSize: 10,
+    fontWeight: FontWeight.w400,
+    height: 1.4,
+  );
+
+  static const TextStyle headingSm = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+    height: 1.3,
   );
 
   // ─── Chiffres (KPI, montants) ────────────────────────────────────────────
@@ -514,16 +531,18 @@ class AppTheme {
       ),
 
       // ─── Thème de texte global ──────────────────────────────────────────
-      textTheme: const TextTheme(
-        displayLarge: AppTypography.displayLg,
-        headlineLarge: AppTypography.headingXl,
-        headlineMedium: AppTypography.headingLg,
-        titleLarge: AppTypography.headingMd,
-        bodyLarge: AppTypography.bodyLg,
-        bodyMedium: AppTypography.bodyMd,
-        bodySmall: AppTypography.bodySm,
-        labelLarge: AppTypography.labelMd,
-        labelSmall: AppTypography.labelSm,
+      textTheme: GoogleFonts.poppinsTextTheme(
+        const TextTheme(
+          displayLarge: AppTypography.displayLg,
+          headlineLarge: AppTypography.headingXl,
+          headlineMedium: AppTypography.headingLg,
+          titleLarge: AppTypography.headingMd,
+          bodyLarge: AppTypography.bodyLg,
+          bodyMedium: AppTypography.bodyMd,
+          bodySmall: AppTypography.bodySm,
+          labelLarge: AppTypography.labelMd,
+          labelSmall: AppTypography.labelSm,
+        ),
       ).apply(
         bodyColor: AppColors.textPrimaryLight,
         displayColor: AppColors.textPrimaryLight,
@@ -674,16 +693,18 @@ class AppTheme {
         circularTrackColor: AppColors.dividerDark,
       ),
 
-      textTheme: const TextTheme(
-        displayLarge: AppTypography.displayLg,
-        headlineLarge: AppTypography.headingXl,
-        headlineMedium: AppTypography.headingLg,
-        titleLarge: AppTypography.headingMd,
-        bodyLarge: AppTypography.bodyLg,
-        bodyMedium: AppTypography.bodyMd,
-        bodySmall: AppTypography.bodySm,
-        labelLarge: AppTypography.labelMd,
-        labelSmall: AppTypography.labelSm,
+      textTheme: GoogleFonts.poppinsTextTheme(
+        const TextTheme(
+          displayLarge: AppTypography.displayLg,
+          headlineLarge: AppTypography.headingXl,
+          headlineMedium: AppTypography.headingLg,
+          titleLarge: AppTypography.headingMd,
+          bodyLarge: AppTypography.bodyLg,
+          bodyMedium: AppTypography.bodyMd,
+          bodySmall: AppTypography.bodySm,
+          labelLarge: AppTypography.labelMd,
+          labelSmall: AppTypography.labelSm,
+        ),
       ).apply(
         bodyColor: AppColors.textPrimaryDark,
         displayColor: AppColors.textPrimaryDark,

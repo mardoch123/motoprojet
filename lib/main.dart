@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -6,6 +7,7 @@ import 'package:motoprojet/core/l10n/generated/app_localizations.dart';
 import 'package:motoprojet/core/monitoring/sync_monitoring_service.dart';
 import 'package:motoprojet/core/monitoring/usage_tracking_service.dart';
 import 'package:motoprojet/core/network/offline_storage_service.dart';
+import 'package:motoprojet/core/network/providers.dart' show OfflineStorageHolder;
 import 'package:motoprojet/core/notifications/notification_service.dart';
 import 'package:motoprojet/core/preferences/preferences_provider.dart';
 import 'package:motoprojet/core/router/app_router.dart';
@@ -16,6 +18,14 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialiser Firebase (google-services.json est dans android/app/)
+  try {
+    await Firebase.initializeApp();
+    AppLogger.i('[Firebase] Initialisé avec succès');
+  } catch (e) {
+    AppLogger.w('[Firebase] Non configuré: $e');
+  }
 
   // Charger les variables d'environnement
   await dotenv.load(fileName: '.env');
@@ -91,6 +101,9 @@ class _MotoProjetAppState extends ConsumerState<MotoProjetApp> {
       // Initialiser le stockage hors-ligne (Hive)
       final offlineStorage = OfflineStorageService();
       await offlineStorage.init();
+
+      // Stocker l'instance pour les providers
+      OfflineStorageHolder.instance = offlineStorage;
 
       // Initialiser le stockage du chat d'aide
       await HelpChatStorage.init();

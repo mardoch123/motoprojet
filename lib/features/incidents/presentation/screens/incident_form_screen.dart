@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:motoprojet/core/theme/app_theme.dart';
 import 'package:motoprojet/features/incidents/presentation/incidents_provider.dart';
@@ -31,12 +32,74 @@ class _IncidentFormScreenState extends ConsumerState<IncidentFormScreen> {
   String _severity = 'moyenne';
   bool _isSubmitting = false;
 
+  // GPS
+  double? _latitude;
+  double? _longitude;
+  bool _isGettingLocation = false;
+  String? _locationError;
+
   @override
   void initState() {
     super.initState();
     _vehiculeId = widget.preselectedVehiculeId;
     // Charger les véhicules pour le sélecteur
     Future.microtask(() => ref.read(vehiculesListProvider.notifier).loadVehicules());
+    // Détecter automatiquement la position GPS
+    _detectLocation();
+  }
+
+  /// Détection automatique du GPS (latitude/longitude)
+  Future<void> _detectLocation() async {
+    setState(() {
+      _isGettingLocation = true;
+      _locationError = null;
+    });
+    try {
+      // Vérifier les permissions
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        setState(() {
+          _isGettingLocation = false;
+          _locationError = 'Service de localisation désactivé';
+        });
+        return;
+      }
+
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          setState(() {
+            _isGettingLocation = false;
+            _locationError = 'Permission de localisation refusée';
+          });
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        setState(() {
+          _isGettingLocation = false;
+          _locationError = 'Permission de localisation refusée définitivement';
+        });
+        return;
+      }
+
+      // Obtenir la position
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      setState(() {
+        _latitude = position.latitude;
+        _longitude = position.longitude;
+        _isGettingLocation = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isGettingLocation = false;
+        _locationError = 'Erreur GPS: $e';
+      });
+    }
   }
 
   @override
@@ -173,6 +236,63 @@ class _IncidentFormScreenState extends ConsumerState<IncidentFormScreen> {
               validator: (v) => v == null || v.isEmpty ? 'Veuillez indiquer le lieu' : null,
             ),
 
+            const SizedBox(height: 8),
+
+            // ── GPS automatique ──
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: _latitude != null
+                    ? Colors.green.withOpacity(0.08)
+                    : _locationError != null
+                        ? Colors.red.withOpacity(0.08)
+                        : Colors.blue.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: _latitude != null
+                      ? Colors.green.withOpacity(0.3)
+                      : _locationError != null
+                          ? Colors.red.withOpacity(0.3)
+                          : Colors.blue.withOpacity(0.3),
+                ),
+              ),
+              child: Row(
+                children: [
+                  if (_isGettingLocation)
+                    const SizedBox(
+                      width: 18, height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  else
+                    Icon(
+                      _latitude != null ? Icons.gps_fixed : (_locationError != null ? Icons.gps_off : Icons.location_searching),
+                      size: 20,
+                      color: _latitude != null ? Colors.green : (_locationError != null ? Colors.red : Colors.blue),
+                    ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      _isGettingLocation
+                          ? 'D\u00e9tection GPS en cours...'
+                          : _latitude != null
+                              ? 'GPS : ${_latitude!.toStringAsFixed(5)}, ${_longitude!.toStringAsFixed(5)}'
+                              : _locationError ?? 'Localisation en cours...',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: _latitude != null ? Colors.green.shade800 : (_locationError != null ? Colors.red.shade800 : Colors.blue.shade800),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  if (_locationError != null)
+                    GestureDetector(
+                      onTap: _detectLocation,
+                      child: const Icon(Icons.refresh, size: 20, color: Colors.blue),
+                    ),
+                ],
+              ),
+            ),
+
             const SizedBox(height: 20),
 
             // ── Description ──
@@ -187,11 +307,11 @@ class _IncidentFormScreenState extends ConsumerState<IncidentFormScreen> {
             const SizedBox(height: 20),
 
             // ── Photos ──
-            const Text('Photos',
+            const Text('Photos *',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppTheme.textPrimary)),
             const SizedBox(height: 4),
-            const Text('Jusqu\'à 5 photos — compressées automatiquement',
-                style: TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+            Text('Au moins une photo obligatoire — jusqu\u00e0 5 photos — compress\u00e9es automatiquement',
+                style: TextStyle(fontSize: 11, color: _photos.isEmpty ? Colors.red.shade700 : AppTheme.textSecondary)),
             const SizedBox(height: 8),
             SizedBox(
               height: 100,
@@ -362,6 +482,28 @@ class _IncidentFormScreenState extends ConsumerState<IncidentFormScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
+    // Validation : au moins une photo obligatoire
+    if (_photos.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Au moins une photo est obligatoire pour signaler un incident'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Validation : GPS obligatoire
+    if (_latitude == null || _longitude == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_locationError ?? 'Les coordonnées GPS sont obligatoires. Veuillez réessayer.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     setState(() => _isSubmitting = true);
 
     final result = await ref.read(incidentsProvider.notifier).createIncident(
@@ -370,6 +512,8 @@ class _IncidentFormScreenState extends ConsumerState<IncidentFormScreen> {
       severity: _severity,
       lieu: _lieuController.text,
       description: _descriptionController.text,
+      latitude: _latitude!,
+      longitude: _longitude!,
       photos: _photos,
     );
 

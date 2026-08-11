@@ -27,7 +27,10 @@ class _InactivityDetectorState extends ConsumerState<InactivityDetector> {
   @override
   void initState() {
     super.initState();
-    _resetInactivityTimer();
+    // Délayer après le build pour éviter "modify provider during build"
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _resetInactivityTimer();
+    });
     // Heartbeat toutes les 5 minutes
     _heartbeatTimer = Timer.periodic(const Duration(minutes: 5), (_) {
       ref.read(authProvider.notifier).recordActivity();

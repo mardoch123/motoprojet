@@ -31,14 +31,22 @@ class PaiementModel extends Equatable {
       id: json['id'] as String,
       chauffeurId: json['chauffeur_id'] as String,
       vehiculeId: json['vehicule_id'] as String,
-      montant: (json['montant'] as num).toDouble(),
+      montant: _parseDouble(json['montant']),
       date: json['date'] as String,
       mode: json['mode'] as String? ?? 'cash',
       transactionKkiapayId: json['transaction_kkiapay_id'] as String?,
-      kkiapayFrais: (json['kkiapay_frais'] as num?)?.toDouble(),
+      kkiapayFrais: json['kkiapay_frais'] != null ? _parseDouble(json['kkiapay_frais']) : null,
       synchroniseOffline: json['synchronise_offline'] as bool? ?? false,
       dateEnregistrement: DateTime.parse(json['date_enregistrement'] as String),
     );
+  }
+
+  /// Parse un montant qui peut être num ou String (le backend PostgreSQL retourne
+  /// les NUMERIC en string via le driver HTTP).
+  static double _parseDouble(dynamic value) {
+    if (value == null) return 0;
+    if (value is num) return value.toDouble();
+    return double.tryParse(value.toString()) ?? 0;
   }
 
   Map<String, dynamic> toJson() {

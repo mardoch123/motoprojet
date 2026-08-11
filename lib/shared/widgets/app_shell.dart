@@ -42,12 +42,12 @@ class AppShell extends ConsumerWidget {
           // Bulle flottante d'aide (en bas à droite, au-dessus de la nav bar)
           Positioned(
             right: 16,
-            bottom: items.isEmpty ? 24 : 72, // Au-dessus de la BottomNavigationBar
+            bottom: items.length < 2 ? 24 : 72, // Au-dessus de la BottomNavigationBar
             child: _HelpFloatingBubble(),
           ),
         ],
       ),
-      bottomNavigationBar: items.isEmpty
+      bottomNavigationBar: items.length < 2
           ? null
           : BottomNavigationBar(
               currentIndex: _getCurrentIndex(context, items),
@@ -65,9 +65,20 @@ class AppShell extends ConsumerWidget {
 
   int _getCurrentIndex(BuildContext context, List<_NavEntry> items) {
     final location = GoRouterState.of(context).matchedLocation;
+    
+    // Chercher d'abord une correspondance exacte
     for (int i = 0; i < items.length; i++) {
-      if (location.startsWith(items[i].route)) return i;
+      if (location == items[i].route) return i;
     }
+    
+    // Sinon chercher une correspondance par préfixe (du plus long au plus court)
+    // pour éviter que /chauffeur matche avant /chauffeur/paiements
+    for (int i = 0; i < items.length; i++) {
+      if (location.startsWith(items[i].route) && items[i].route != '/') {
+        return i;
+      }
+    }
+    
     return 0;
   }
 

@@ -59,7 +59,7 @@ class _OnboardingChauffeurScreenState extends ConsumerState<OnboardingChauffeurS
       final apiClient = ref.read(apiClientProvider);
       // Sauvegarder l'objectif (optionnel, peut échouer sans bloquer)
       try {
-        await apiClient.post('/api/v1/auth/onboarding/complete', data: {
+        await apiClient.post('/auth/onboarding/complete', data: {
           'objectif_journalier': double.tryParse(_objectifController.text) ?? 5000,
         });
       } catch (_) {}

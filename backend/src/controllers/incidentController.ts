@@ -67,13 +67,22 @@ export async function listActiveIncidents(_req: AuthRequest, res: Response, next
 /**
  * POST /api/v1/incidents
  * Crée un incident et met à jour le statut du véhicule.
+ * GPS (latitude/longitude) et photos (photo_urls) obligatoires.
  */
 export async function createIncident(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const {
       vehicule_id, type, description, photo_url, photo_urls,
-      severity, lieu, date,
+      severity, lieu, date, latitude, longitude,
     } = req.body;
+
+    // ── Validations obligatoires ──
+    if (!photo_urls || (Array.isArray(photo_urls) && photo_urls.length === 0)) {
+      throw AppError.badRequest('Au moins une photo est obligatoire pour signaler un incident');
+    }
+    if (latitude == null || longitude == null) {
+      throw AppError.badRequest('Les coordonnées GPS sont obligatoires (détection automatique)');
+    }
 
     // Vérifier le véhicule
     const { rows: vehicules } = await pool.query(`SELECT id, plaque, statut FROM vehicules WHERE id = $1`, [vehicule_id]);
@@ -83,16 +92,19 @@ export async function createIncident(req: AuthRequest, res: Response, next: Next
     try {
       await client.query('BEGIN');
 
-      // Créer l'incident
+      // Créer l'incident avec GPS et photos
       const { rows } = await client.query(`
         INSERT INTO incidents (vehicule_id, type, description, photo_url, photo_urls,
-                               severity, lieu, date, declared_by, statut)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, COALESCE($8, CURRENT_DATE), $9, 'signale')
+                               severity, lieu, date, declared_by, statut,
+                               latitude, longitude)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, COALESCE($8, CURRENT_DATE), $9, 'signale',
+                $10, $11)
         RETURNING *`,
         [
           vehicule_id, type, description ?? null, photo_url ?? null,
-          photo_urls ?? [], severity ?? 'moyenne', lieu ?? null,
+          photo_urls, severity ?? 'moyenne', lieu ?? null,
           date ?? null, req.user?.sub ?? null,
+          latitude, longitude,
         ],
       );
 

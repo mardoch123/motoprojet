@@ -15,9 +15,17 @@ final connectivityProvider = Provider<ConnectivityService>((ref) {
 });
 
 /// Provider du stockage hors-ligne
+/// Utilise l'instance initialisée dans main.dart si disponible
 final offlineStorageProvider = Provider<OfflineStorageService>((ref) {
-  return OfflineStorageService();
+  // L'instance est initialisée dans main.dart avec Hive.openBox()
+  // On la récupère via un getter statique
+  return OfflineStorageHolder.instance ?? OfflineStorageService();
 });
+
+/// Holder pour l'instance de OfflineStorageService initialisée
+class OfflineStorageHolder {
+  static OfflineStorageService? instance;
+}
 
 /// Provider du service de synchronisation
 final syncServiceProvider = Provider<SyncService>((ref) {

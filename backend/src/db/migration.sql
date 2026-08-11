@@ -1093,3 +1093,11 @@ UPDATE paiements SET mode = 'mobile_money' WHERE mode = 'cash';
 ALTER TABLE paiements DROP CONSTRAINT IF EXISTS paiements_mode_check;
 ALTER TABLE paiements ADD CONSTRAINT paiements_mode_check CHECK (mode IN ('mobile_money', 'kkiapay', 'mobile_money_kkiapay'));
 ALTER TABLE paiements ALTER COLUMN mode SET DEFAULT 'kkiapay';
+
+-- ─── 40. Incidents : coordonnées GPS ───────────────────────────────────────
+ALTER TABLE incidents ADD COLUMN IF NOT EXISTS latitude NUMERIC(10, 7);
+ALTER TABLE incidents ADD COLUMN IF NOT EXISTS longitude NUMERIC(10, 7);
+
+-- ─── 41. Paiements : ré-autoriser le mode cash ───────────────────────────────
+ALTER TABLE paiements DROP CONSTRAINT IF EXISTS paiements_mode_check;
+ALTER TABLE paiements ADD CONSTRAINT paiements_mode_check CHECK (mode IN ('cash', 'mobile_money', 'kkiapay', 'mobile_money_kkiapay'));

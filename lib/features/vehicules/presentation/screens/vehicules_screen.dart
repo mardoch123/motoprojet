@@ -162,8 +162,13 @@ class _VehiculesScreenState extends ConsumerState<VehiculesScreen> {
             notifier.setStatutFilter(selected ? value : null);
           }
         },
-        selectedColor: AppTheme.primaryColor.withValues(alpha: 0.2),
-        checkmarkColor: AppTheme.primaryColor,
+        selectedColor: AppTheme.successColor,
+        labelStyle: TextStyle(
+          color: isSelected ? Colors.white : Colors.grey.shade700,
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+        ),
+        checkmarkColor: Colors.white,
+        side: BorderSide.none,
       ),
     );
   }

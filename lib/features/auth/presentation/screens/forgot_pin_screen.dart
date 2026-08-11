@@ -32,7 +32,7 @@ class _ForgotPinScreenState extends ConsumerState<ForgotPinScreen> {
 
     try {
       final apiClient = ref.read(apiClientProvider);
-      await apiClient.post('/api/v1/auth/request-pin-reset', data: {
+      await apiClient.post('/auth/request-pin-reset', data: {
         'telephone': _telephoneController.text.trim(),
       });
 
