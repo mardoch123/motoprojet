@@ -14,7 +14,7 @@
 -- ─── 1. Corriger l'INSERT chauffeur sans user_id ─────────────────────────────
 -- Ajouter l'utilisateur manquant pour Mensah TOSSOU
 INSERT INTO users (telephone, pin_hash, role, must_change_pin)
-VALUES ('+22945678901', '$2a$10$rZG2Ql6G1Y0vGKJXmZCnAeN5R6tL8V9wX2yH4fK6jM8nO0pQ2rS4t', 'chauffeur', TRUE)
+VALUES ('+22945678901', '$2b$10$O7X5JeV20ndlZmKAIrcTTOoXCjYBff7BcScnSfCEf2O1J.TmC7YKa', 'chauffeur', TRUE)
 ON CONFLICT (telephone) DO NOTHING;
 
 -- Mettre à jour le chauffeur existant pour lier son user_id

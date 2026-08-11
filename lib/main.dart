@@ -165,7 +165,7 @@ class _MotoProjetAppState extends ConsumerState<MotoProjetApp> {
           fontSizeFactor: prefs.fontScale,
         ),
       ),
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
 
       // ─── Navigation ────────────────────────────────────────────────────
       routerConfig: router,

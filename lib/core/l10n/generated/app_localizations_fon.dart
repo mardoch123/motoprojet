@@ -331,7 +331,7 @@ class AppLocalizationsFon extends AppLocalizations {
   String get authPhone => 'Telefɔni';
 
   @override
-  String get authPhoneHint => '+229 XX XX XX XX';
+  String get authPhoneHint => '+229 XX XX XX XX XX';
 
   @override
   String get authPin => 'PIN nùkplɔn';

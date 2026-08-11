@@ -245,10 +245,10 @@ FROM paiements;
 
 -- PIN "1234" hashé avec bcrypt (10 rounds)
 INSERT INTO users (telephone, pin_hash, role, must_change_pin) VALUES
-  ('+22912345678', '$2a$10$rZG2Ql6G1Y0vGKJXmZCnAeN5R6tL8V9wX2yH4fK6jM8nO0pQ2rS4t', 'super_admin', FALSE),
-  ('+22923456789', '$2a$10$rZG2Ql6G1Y0vGKJXmZCnAeN5R6tL8V9wX2yH4fK6jM8nO0pQ2rS4t', 'gestionnaire', FALSE),
-  ('+22934567890', '$2a$10$rZG2Ql6G1Y0vGKJXmZCnAeN5R6tL8V9wX2yH4fK6jM8nO0pQ2rS4t', 'chauffeur', TRUE),
-  ('+22945678901', '$2a$10$rZG2Ql6G1Y0vGKJXmZCnAeN5R6tL8V9wX2yH4fK6jM8nO0pQ2rS4t', 'chauffeur', TRUE);
+  ('+22912345678', '$2b$10$O7X5JeV20ndlZmKAIrcTTOoXCjYBff7BcScnSfCEf2O1J.TmC7YKa', 'super_admin', FALSE),
+  ('+22923456789', '$2b$10$O7X5JeV20ndlZmKAIrcTTOoXCjYBff7BcScnSfCEf2O1J.TmC7YKa', 'gestionnaire', FALSE),
+  ('+22934567890', '$2b$10$O7X5JeV20ndlZmKAIrcTTOoXCjYBff7BcScnSfCEf2O1J.TmC7YKa', 'chauffeur', TRUE),
+  ('+22945678901', '$2b$10$O7X5JeV20ndlZmKAIrcTTOoXCjYBff7BcScnSfCEf2O1J.TmC7YKa', 'chauffeur', TRUE);
 
 -- Chauffeurs de test
 INSERT INTO chauffeurs (user_id, nom, piece_identite) VALUES

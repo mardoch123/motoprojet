@@ -706,91 +706,91 @@ abstract class AppLocalizations {
   /// **'Montant invalide'**
   String get errorInvalidAmount;
 
-  /// Title of the login screen.
+  /// No description provided for @authLoginTitle.
   ///
   /// In fr, this message translates to:
   /// **'Connexion'**
   String get authLoginTitle;
 
-  /// Subtitle of the login screen.
+  /// No description provided for @authLoginSubtitle.
   ///
   /// In fr, this message translates to:
   /// **'Financement de taxis au Bénin'**
   String get authLoginSubtitle;
 
-  /// Phone field label.
+  /// No description provided for @authPhone.
   ///
   /// In fr, this message translates to:
   /// **'Téléphone'**
   String get authPhone;
 
-  /// Phone field hint.
+  /// No description provided for @authPhoneHint.
   ///
   /// In fr, this message translates to:
   /// **'+229 XX XX XX XX'**
   String get authPhoneHint;
 
-  /// PIN field label.
+  /// No description provided for @authPin.
   ///
   /// In fr, this message translates to:
   /// **'Code PIN'**
   String get authPin;
 
-  /// Login button text.
+  /// No description provided for @authLogin.
   ///
   /// In fr, this message translates to:
   /// **'Se connecter'**
   String get authLogin;
 
-  /// Forgot PIN link text.
+  /// No description provided for @authForgotPin.
   ///
   /// In fr, this message translates to:
   /// **'PIN oublié ?'**
   String get authForgotPin;
 
-  /// Error message for invalid credentials.
+  /// No description provided for @authErrorInvalidCredentials.
   ///
   /// In fr, this message translates to:
   /// **'Téléphone ou PIN incorrect.'**
   String get authErrorInvalidCredentials;
 
-  /// Validation error for empty phone.
+  /// No description provided for @authErrorPhoneRequired.
   ///
   /// In fr, this message translates to:
   /// **'Veuillez entrer votre numéro'**
   String get authErrorPhoneRequired;
 
-  /// Validation error for empty PIN.
+  /// No description provided for @authErrorPinRequired.
   ///
   /// In fr, this message translates to:
   /// **'Veuillez entrer votre PIN'**
   String get authErrorPinRequired;
 
-  /// Validation error for PIN too short.
+  /// No description provided for @authErrorPinTooShort.
   ///
   /// In fr, this message translates to:
   /// **'Le PIN doit faire au moins 4 chiffres'**
   String get authErrorPinTooShort;
 
-  /// Favorites section title in payment screen.
+  /// No description provided for @authPaymentFavorites.
   ///
   /// In fr, this message translates to:
   /// **'Favoris'**
   String get authPaymentFavorites;
 
-  /// Last used section title in payment screen.
+  /// No description provided for @authPaymentLastUsed.
   ///
   /// In fr, this message translates to:
   /// **'Dernier utilisé'**
   String get authPaymentLastUsed;
 
-  /// Quick pay button text.
+  /// No description provided for @authPaymentQuickPay.
   ///
   /// In fr, this message translates to:
   /// **'PAIEMENT RAPIDE'**
   String get authPaymentQuickPay;
 
-  /// Favorite saved confirmation.
+  /// No description provided for @authPaymentFavoriteSaved.
   ///
   /// In fr, this message translates to:
   /// **'Favori enregistré'**

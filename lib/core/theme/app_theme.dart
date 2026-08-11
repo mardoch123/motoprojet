@@ -36,11 +36,12 @@ import 'package:flutter/services.dart';
 class AppColors {
   AppColors._();
 
-  // ─── Marque ──────────────────────────────────────────────────────────────
-  static const Color brandGreen      = Color(0xFF1B5E20); // Vert profond — primaire
-  static const Color brandGreenLight = Color(0xFF4CAF50); // Vert vif
-  static const Color brandAmber      = Color(0xFFFF8F00); // Ambre profond — secondaire
-  static const Color brandAmberLight = Color(0xFFFFC107); // Ambre clair
+  // ─── Marque — Premium Teal ─────────────────────────────────────────────
+  static const Color brandGreen      = Color(0xFF00897B); // Teal — primaire premium
+  static const Color brandGreenLight = Color(0xFF26A69A); // Teal clair
+  static const Color brandGreenDark  = Color(0xFF00695C); // Teal foncé (accent)
+  static const Color brandAmber      = Color(0xFFF57C00); // Orange profond — secondaire
+  static const Color brandAmberLight = Color(0xFFFFB74D); // Orange clair
 
   // ─── Statuts (sémantique universelle) ────────────────────────────────────
   /// À jour, paiement effectué, objectif atteint
@@ -49,25 +50,25 @@ class AppColors {
   static const Color statusSuccessOn     = Color(0xFFFFFFFF);
 
   /// Retard léger, en attente, attention
-  static const Color statusWarning       = Color(0xFFE65100);
+  static const Color statusWarning       = Color(0xFFEF6C00);
   static const Color statusWarningSubtle = Color(0xFFFFF3E0);
   static const Color statusWarningOn     = Color(0xFFFFFFFF);
 
   /// Défaut, impayé, critique, erreur
-  static const Color statusError         = Color(0xFFC62828);
+  static const Color statusError         = Color(0xFFD32F2F);
   static const Color statusErrorSubtle   = Color(0xFFFFEBEE);
   static const Color statusErrorOn       = Color(0xFFFFFFFF);
 
   /// Information, en cours, neutre actif
-  static const Color statusInfo          = Color(0xFF1565C0);
+  static const Color statusInfo          = Color(0xFF1976D2);
   static const Color statusInfoSubtle    = Color(0xFFE3F2FD);
   static const Color statusInfoOn        = Color(0xFFFFFFFF);
 
-  // ─── Surfaces — Thème clair ──────────────────────────────────────────────
+  // ─── Surfaces — Thème clair (premium) ──────────────────────────────────
   static const Color surfaceLight        = Color(0xFFFFFFFF);
-  static const Color surfaceLightVariant = Color(0xFFF8FAF8); // gris-vert très clair
-  static const Color backgroundLight     = Color(0xFFF4F6F4); // fond général
-  static const Color dividerLight        = Color(0xFFE0E4E0);
+  static const Color surfaceLightVariant = Color(0xFFF7F9FC); // gris-bleu très clair
+  static const Color backgroundLight     = Color(0xFFF5F7FA); // fond général premium
+  static const Color dividerLight        = Color(0xFFE8ECF0);
 
   // ─── Surfaces — Thème sombre ─────────────────────────────────────────────
   static const Color surfaceDark         = Color(0xFF1E1E1E);
@@ -76,9 +77,9 @@ class AppColors {
   static const Color dividerDark         = Color(0xFF3A3A3A);
 
   // ─── Textes — Thème clair ────────────────────────────────────────────────
-  static const Color textPrimaryLight    = Color(0xFF1A1A1A);
-  static const Color textSecondaryLight  = Color(0xFF5F6360);
-  static const Color textTertiaryLight   = Color(0xFF9E9E9E);
+  static const Color textPrimaryLight    = Color(0xFF1A2332); // Bleu-gris très foncé
+  static const Color textSecondaryLight  = Color(0xFF5F6B7A); // Gris-bleu moyen
+  static const Color textTertiaryLight   = Color(0xFF94A3B8); // Gris clair
   static const Color textOnBrandLight    = Color(0xFFFFFFFF);
 
   // ─── Textes — Thème sombre ───────────────────────────────────────────────
@@ -90,7 +91,7 @@ class AppColors {
   // ─── Utilitaires ─────────────────────────────────────────────────────────
   static const Color overlay40 = Color(0x66000000); // 40% noir
   static const Color overlay20 = Color(0x33000000); // 20% noir
-  static const Color scrim     = Color(0xB3000000); // 70% noir (scrim modal)
+  static const Color scrim     = Color(0x99000000); // 60% noir (scrim modal)
 }
 
 // ─── Espacements ─────────────────────────────────────────────────────────────
@@ -141,28 +142,39 @@ class AppRadius {
 class AppShadows {
   AppShadows._();
 
+  /// Ombre subtile pour cartes — effet flottant premium
   static const List<BoxShadow> card = [
     BoxShadow(
-      color: Color(0x14000000), // 8% noir
-      blurRadius: 8,
-      offset: Offset(0, 2),
+      color: Color(0x0D000000), // 5% noir
+      blurRadius: 12,
+      offset: Offset(0, 4),
     ),
     BoxShadow(
-      color: Color(0x0A000000), // 4% noir
-      blurRadius: 2,
+      color: Color(0x08000000), // 3% noir
+      blurRadius: 4,
       offset: Offset(0, 1),
     ),
   ];
 
+  /// Ombre élevée pour cartes interactives / modales
   static const List<BoxShadow> cardElevated = [
     BoxShadow(
-      color: Color(0x1F000000), // 12% noir
-      blurRadius: 16,
-      offset: Offset(0, 4),
+      color: Color(0x14000000), // 8% noir
+      blurRadius: 24,
+      offset: Offset(0, 8),
     ),
     BoxShadow(
-      color: Color(0x0D000000),
-      blurRadius: 4,
+      color: Color(0x0A000000), // 4% noir
+      blurRadius: 6,
+      offset: Offset(0, 2),
+    ),
+  ];
+
+  /// Ombre subtile pour AppBar
+  static const List<BoxShadow> appBar = [
+    BoxShadow(
+      color: Color(0x0A000000), // 4% noir
+      blurRadius: 8,
       offset: Offset(0, 2),
     ),
   ];
@@ -172,67 +184,67 @@ class AppShadows {
 
 // ─── Typographie ─────────────────────────────────────────────────────────────
 ///
-/// Hiérarchie optimisée pour la lisibilité en extérieur :
-/// - Titres en FontWeight.w800 (ExtraBold) pour le contraste
-/// - Corps de texte en w500 minimum (pas de w400 trop fin)
-/// - Tailles en paliers clairs : 12 / 14 / 16 / 20 / 28 / 34
+/// Hiérarchie premium — élégance et lisibilité :
+/// - Titres en FontWeight.w700 (Bold) pour un look premium
+/// - Corps de texte en w400 (Regular) pour la légèreté
+/// - Tailles en paliers clairs : 12 / 14 / 16 / 20 / 26 / 32
 ///
 class AppTypography {
   AppTypography._();
 
   // ─── Titres ──────────────────────────────────────────────────────────────
   static const TextStyle displayLg = TextStyle(
-    fontSize: 34,
-    fontWeight: FontWeight.w800,
-    height: 1.15,
+    fontSize: 32,
+    fontWeight: FontWeight.w700,
+    height: 1.2,
     letterSpacing: -0.5,
   );
 
   static const TextStyle headingXl = TextStyle(
-    fontSize: 28,
-    fontWeight: FontWeight.w800,
-    height: 1.2,
+    fontSize: 26,
+    fontWeight: FontWeight.w700,
+    height: 1.25,
     letterSpacing: -0.3,
   );
 
   static const TextStyle headingLg = TextStyle(
     fontSize: 20,
-    fontWeight: FontWeight.w700,
-    height: 1.25,
+    fontWeight: FontWeight.w600,
+    height: 1.3,
     letterSpacing: -0.1,
   );
 
   static const TextStyle headingMd = TextStyle(
     fontSize: 16,
-    fontWeight: FontWeight.w700,
-    height: 1.3,
+    fontWeight: FontWeight.w600,
+    height: 1.35,
   );
 
   // ─── Corps ───────────────────────────────────────────────────────────────
   static const TextStyle bodyLg = TextStyle(
     fontSize: 16,
-    fontWeight: FontWeight.w500,
-    height: 1.4,
+    fontWeight: FontWeight.w400,
+    height: 1.5,
   );
 
   static const TextStyle bodyMd = TextStyle(
     fontSize: 14,
-    fontWeight: FontWeight.w500,
-    height: 1.4,
+    fontWeight: FontWeight.w400,
+    height: 1.5,
   );
 
   static const TextStyle bodySm = TextStyle(
     fontSize: 12,
-    fontWeight: FontWeight.w500,
-    height: 1.4,
+    fontWeight: FontWeight.w400,
+    height: 1.5,
   );
 
   // ─── Chiffres (KPI, montants) ────────────────────────────────────────────
   /// Chiffre KPI grand format — utilisé dans les cartes dashboard
   static const TextStyle kpiValue = TextStyle(
     fontSize: 28,
-    fontWeight: FontWeight.w800,
-    height: 1.1,
+    fontWeight: FontWeight.w700,
+    height: 1.15,
     letterSpacing: -0.5,
     fontFeatures: [FontFeature.tabularFigures()],
   );
@@ -240,41 +252,41 @@ class AppTypography {
   /// Chiffre KPI compact
   static const TextStyle kpiValueCompact = TextStyle(
     fontSize: 20,
-    fontWeight: FontWeight.w700,
-    height: 1.15,
+    fontWeight: FontWeight.w600,
+    height: 1.2,
     fontFeatures: [FontFeature.tabularFigures()],
   );
 
   /// Montant dans un champ de saisie
   static const TextStyle montantInput = TextStyle(
     fontSize: 24,
-    fontWeight: FontWeight.w700,
-    height: 1.2,
+    fontWeight: FontWeight.w600,
+    height: 1.25,
     fontFeatures: [FontFeature.tabularFigures()],
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   );
 
   // ─── Labels ──────────────────────────────────────────────────────────────
   static const TextStyle labelMd = TextStyle(
     fontSize: 13,
-    fontWeight: FontWeight.w600,
-    height: 1.3,
+    fontWeight: FontWeight.w500,
+    height: 1.35,
     letterSpacing: 0.2,
   );
 
   static const TextStyle labelSm = TextStyle(
     fontSize: 11,
-    fontWeight: FontWeight.w600,
-    height: 1.3,
+    fontWeight: FontWeight.w500,
+    height: 1.35,
     letterSpacing: 0.3,
   );
 
   /// Label tout-caps pour en-têtes de section
   static const TextStyle labelCaps = TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.w700,
-    height: 1.3,
-    letterSpacing: 0.8,
+    fontSize: 11,
+    fontWeight: FontWeight.w600,
+    height: 1.4,
+    letterSpacing: 1.0,
   );
 }
 
@@ -326,28 +338,30 @@ class AppTheme {
       colorScheme: colorScheme,
       scaffoldBackgroundColor: AppColors.backgroundLight,
 
-      // ─── AppBar ────────────────────────────────────────────────────────
+      // ─── AppBar — Blanc premium avec ombre subtile ─────────────────
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.brandGreen,
-        foregroundColor: AppColors.textOnBrandLight,
+        backgroundColor: AppColors.surfaceLight,
+        foregroundColor: AppColors.textPrimaryLight,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: true,
         titleTextStyle: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
           height: 1.3,
-          color: AppColors.textOnBrandLight,
+          color: AppColors.textPrimaryLight,
+          letterSpacing: -0.2,
         ),
-        iconTheme: IconThemeData(color: AppColors.textOnBrandLight),
-        systemOverlayStyle: SystemUiOverlayStyle.light,
+        iconTheme: IconThemeData(color: AppColors.textPrimaryLight),
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
 
-      // ─── Cartes ────────────────────────────────────────────────────────
+      // ─── Cartes — Blanches avec ombres douces ─────────────────────
       cardTheme: CardThemeData(
         elevation: 0,
         color: AppColors.surfaceLight,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.card)),
-        shadowColor: AppColors.overlay20,
+        shadowColor: const Color(0x0D000000),
         surfaceTintColor: Colors.transparent,
       ),
 
@@ -360,7 +374,7 @@ class AppTheme {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           minimumSize: const Size(0, AppTouch.minTarget),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.button)),
-          textStyle: AppTypography.bodyLg.copyWith(fontWeight: FontWeight.w700),
+          textStyle: AppTypography.bodyLg.copyWith(fontWeight: FontWeight.w600),
         ),
       ),
 
@@ -370,7 +384,7 @@ class AppTheme {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           minimumSize: const Size(0, AppTouch.minTarget),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.button)),
-          textStyle: AppTypography.bodyLg.copyWith(fontWeight: FontWeight.w700),
+          textStyle: AppTypography.bodyLg.copyWith(fontWeight: FontWeight.w600),
         ),
       ),
 
@@ -422,7 +436,7 @@ class AppTheme {
         ),
         labelStyle: AppTypography.bodyMd.copyWith(
           color: AppColors.textSecondaryLight,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w400,
         ),
         hintStyle: AppTypography.bodyMd.copyWith(color: AppColors.textTertiaryLight),
         errorStyle: AppTypography.bodySm.copyWith(color: AppColors.statusError),
@@ -434,7 +448,7 @@ class AppTheme {
         selectedItemColor: AppColors.brandGreen,
         unselectedItemColor: AppColors.textTertiaryLight,
         type: BottomNavigationBarType.fixed,
-        elevation: 8,
+        elevation: 0,
         selectedLabelStyle: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
         unselectedLabelStyle: TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
       ),
@@ -444,8 +458,8 @@ class AppTheme {
         labelColor: AppColors.brandGreen,
         unselectedLabelColor: AppColors.textSecondaryLight,
         indicatorColor: AppColors.brandGreen,
-        labelStyle: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
-        unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+        labelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+        unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
       ),
 
       // ─── Chips ──────────────────────────────────────────────────────────
@@ -697,16 +711,18 @@ class AppTheme {
       ),
       scaffoldBackgroundColor: Colors.white,
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.brandGreen,
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: true,
         titleTextStyle: TextStyle(
           fontSize: 18,
-          fontWeight: FontWeight.w800,
-          color: Colors.white,
+          fontWeight: FontWeight.w700,
+          color: Colors.black,
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: Colors.black),
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       textTheme: const TextTheme(
         displayLarge: TextStyle(fontSize: 36, fontWeight: FontWeight.w900, color: Colors.black),
