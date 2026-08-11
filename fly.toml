@@ -5,7 +5,7 @@
 # Doc : https://fly.io/docs/
 # =============================================================================
 
-app = 'motoprojet-api'
+app = 'motoprojet'
 primary_region = 'cdg'  # Paris
 
 [http_service]
@@ -22,3 +22,4 @@ primary_region = 'cdg'  # Paris
     path = '/health'
     interval = '30s'
     timeout = '10s'
+    grace_period = '60s'
