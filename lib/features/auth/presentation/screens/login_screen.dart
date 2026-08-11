@@ -64,7 +64,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       if (mustChangePin) {
         // Rediriger vers l'écran de changement de PIN obligatoire
-        if (mounted) context.go('/change-pin');
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) context.go('/change-pin');
+        });
         return;
       }
       // Sinon le router redirect gère la redirection vers le dashboard

@@ -52,12 +52,16 @@ class _OnboardingGestionnaireScreenState extends ConsumerState<OnboardingGestion
       await apiClient.post('/api/v1/auth/onboarding/complete');
     } catch (_) {}
     await ref.read(authProvider.notifier).completeOnboarding();
-    if (mounted) context.go('/gestionnaire');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.go('/gestionnaire');
+    });
   }
 
   void _skip() {
     ref.read(authProvider.notifier).completeOnboarding();
-    context.go('/gestionnaire');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.go('/gestionnaire');
+    });
   }
 
   @override

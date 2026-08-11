@@ -57,7 +57,9 @@ class _ChangePinScreenState extends ConsumerState<ChangePinScreen> {
           ),
         );
         // Le router redirect enverra vers le dashboard
-        context.go('/');
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) context.go('/');
+        });
       }
     } catch (e) {
       setState(() {

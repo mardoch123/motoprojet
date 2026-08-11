@@ -65,12 +65,20 @@ class _OnboardingChauffeurScreenState extends ConsumerState<OnboardingChauffeurS
       } catch (_) {}
     } catch (_) {}
     await ref.read(authProvider.notifier).completeOnboarding();
-    if (mounted) context.go('/chauffeur');
+    // Délayer la navigation après le rebuild du router déclenché par completeOnboarding()
+    if (mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) context.go('/chauffeur');
+      });
+    }
   }
 
   void _skip() {
     ref.read(authProvider.notifier).completeOnboarding();
-    context.go('/chauffeur');
+    // Délayer la navigation après le rebuild du router
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.go('/chauffeur');
+    });
   }
 
   @override

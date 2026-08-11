@@ -127,18 +127,28 @@ class _OnboardingSuperAdminScreenState extends ConsumerState<OnboardingSuperAdmi
       await apiClient.post('/api/v1/auth/onboarding/complete');
       await ref.read(authProvider.notifier).completeOnboarding();
 
-      if (mounted) context.go('/admin');
+      if (mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) context.go('/admin');
+        });
+      }
     } catch (e) {
       // Même en cas d'erreur, marquer comme terminé pour ne pas bloquer
       await ref.read(authProvider.notifier).completeOnboarding();
-      if (mounted) context.go('/admin');
+      if (mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) context.go('/admin');
+        });
+      }
     }
   }
 
   void _skip() {
     // Passer l'onboarding sans sauvegarder
     ref.read(authProvider.notifier).completeOnboarding();
-    context.go('/admin');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.go('/admin');
+    });
   }
 
   @override
