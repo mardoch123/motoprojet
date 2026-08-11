@@ -45,6 +45,9 @@ export const config = {
     webhookSecret: env('KKIAPAY_WEBHOOK_SECRET', ''),
     sandbox: env('KKIAPAY_SANDBOX', 'true') === 'true',
   },
+  fcm: {
+    serverKey: env('FCM_SERVER_KEY', ''),
+  },
   encryption: {
     key: env('ENCRYPTION_KEY', ''),
   },

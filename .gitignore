@@ -52,3 +52,8 @@ app.*.map.json
 # Backend secrets
 backend/.env
 backend/.env.production
+
+# Firebase (fichiers générés contenant des clés API)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+lib/firebase_options.dart

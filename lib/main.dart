@@ -6,6 +6,7 @@ import 'package:motoprojet/core/l10n/generated/app_localizations.dart';
 import 'package:motoprojet/core/monitoring/sync_monitoring_service.dart';
 import 'package:motoprojet/core/monitoring/usage_tracking_service.dart';
 import 'package:motoprojet/core/network/offline_storage_service.dart';
+import 'package:motoprojet/core/notifications/notification_service.dart';
 import 'package:motoprojet/core/preferences/preferences_provider.dart';
 import 'package:motoprojet/core/router/app_router.dart';
 import 'package:motoprojet/core/theme/app_theme.dart';
@@ -97,6 +98,9 @@ class _MotoProjetAppState extends ConsumerState<MotoProjetApp> {
       // Initialiser les services de monitoring
       await UsageTrackingService.instance.init();
       await SyncMonitoringService.instance.init();
+
+      // Initialiser les notifications push Firebase
+      await NotificationService().init();
 
       // Nettoyer les anciennes entrées de sync
       await SyncMonitoringService.instance.cleanup();
