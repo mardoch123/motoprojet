@@ -134,5 +134,21 @@
   "errorNetwork": "Waɖɛ hwenukundi. Pɔn hwenukundi towe.",
   "errorGeneric": "Waɖɛ ɖe wá. Tɛn kpɔ.",
   "errorRequired": "É ɖó nùɖoɖo",
-  "errorInvalidAmount": "Nùɖoɖo ɖe ǎ"
+  "errorInvalidAmount": "Nùɖoɖo ɖe ǎ",
+
+  "authLoginTitle": "Jlɛ",
+  "authLoginSubtitle": "Nùɖoɖo mɔtɔ ɖo Benɛ̂n",
+  "authPhone": "Telefɔni",
+  "authPhoneHint": "+229 XX XX XX XX",
+  "authPin": "PIN nùkplɔn",
+  "authLogin": "Jlɛ",
+  "authForgotPin": "PIN ǎ?",
+  "authErrorInvalidCredentials": "Telefɔn kpo PIN kpo ɖe ǎ.",
+  "authErrorPhoneRequired": "Ðo telefɔn towe",
+  "authErrorPinRequired": "Ðo PIN towe",
+  "authErrorPinTooShort": "PIN ɖó ɖo azǎn 4",
+  "authPaymentFavorites": "Nùɖaxo",
+  "authPaymentLastUsed": "É gbɛzǎn",
+  "authPaymentQuickPay": "JLƐ KPƆ́",
+  "authPaymentFavoriteSaved": "Nùɖaxo jɛ"
 }

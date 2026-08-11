@@ -155,5 +155,21 @@
   "errorNetwork": "Erreur de connexion. Vérifiez votre réseau.",
   "errorGeneric": "Une erreur est survenue. Veuillez réessayer.",
   "errorRequired": "Ce champ est requis",
-  "errorInvalidAmount": "Montant invalide"
+  "errorInvalidAmount": "Montant invalide",
+
+  "authLoginTitle": "Connexion",
+  "authLoginSubtitle": "Financement de taxis au Bénin",
+  "authPhone": "Téléphone",
+  "authPhoneHint": "+229 XX XX XX XX",
+  "authPin": "Code PIN",
+  "authLogin": "Se connecter",
+  "authForgotPin": "PIN oublié ?",
+  "authErrorInvalidCredentials": "Téléphone ou PIN incorrect.",
+  "authErrorPhoneRequired": "Veuillez entrer votre numéro",
+  "authErrorPinRequired": "Veuillez entrer votre PIN",
+  "authErrorPinTooShort": "Le PIN doit faire au moins 4 chiffres",
+  "authPaymentFavorites": "Favoris",
+  "authPaymentLastUsed": "Dernier utilisé",
+  "authPaymentQuickPay": "PAIEMENT RAPIDE",
+  "authPaymentFavoriteSaved": "Favori enregistré"
 }

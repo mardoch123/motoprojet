@@ -6,6 +6,7 @@ import 'package:motoprojet/core/constants/app_constants.dart';
 import 'package:motoprojet/core/network/auth_interceptor.dart';
 import 'package:motoprojet/core/network/certificate_pinning_adapter.dart';
 import 'package:motoprojet/core/network/error_interceptor.dart';
+import 'package:motoprojet/core/network/retry_interceptor.dart';
 import 'package:motoprojet/core/utils/app_logger.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
@@ -41,6 +42,7 @@ class ApiClient {
 
     _dio.interceptors.addAll([
       AuthInterceptor(_secureStorage),
+      RetryInterceptor(maxRetries: 3, baseDelayMs: 1000),
       ErrorInterceptor(),
       // Logger pretty uniquement en debug
       if (kDebugMode)

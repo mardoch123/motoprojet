@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:motoprojet/core/l10n/generated/app_localizations.dart';
 import 'package:motoprojet/core/network/providers.dart';
 import 'package:motoprojet/core/theme/app_theme.dart';
 import 'package:motoprojet/features/auth/presentation/auth_provider.dart';
@@ -45,6 +46,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final data = response.data['data'] as Map<String, dynamic>;
       final mustChangePin = data['must_change_pin'] as bool? ?? false;
       final onboardingCompleted = data['onboarding_completed'] as bool? ?? false;
+      final refreshToken = data['refresh_token'] as String?;
+
+      // Stocker le refresh token s'il est présent
+      if (refreshToken != null) {
+        await ref.read(authProvider.notifier).saveRefreshToken(refreshToken);
+      }
 
       await ref.read(authProvider.notifier).login(
             token: data['access_token'] as String,
@@ -58,11 +65,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (mustChangePin) {
         // Rediriger vers l'écran de changement de PIN obligatoire
         if (mounted) context.go('/change-pin');
+        return;
       }
       // Sinon le router redirect gère la redirection vers le dashboard
     } catch (e) {
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
       setState(() {
-        _errorMessage = 'Téléphone ou PIN incorrect.';
+        _errorMessage = l10n.authErrorInvalidCredentials;
       });
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -71,6 +81,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -82,10 +94,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(Icons.directions_bike, size: 80, color: AppTheme.primaryColor),
+                  Semantics(
+                    label: l10n.appTitle,
+                    child: const Icon(Icons.directions_bike, size: 80, color: AppTheme.primaryColor),
+                  ),
                   const SizedBox(height: 16),
                   Text(
-                    'MotoProjet',
+                    l10n.appTitle,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                           fontWeight: FontWeight.bold,
@@ -93,22 +108,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Financement de taxis au Bénin',
+                  Text(
+                    l10n.authLoginSubtitle,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 48),
                   TextFormField(
                     controller: _telephoneController,
                     keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      labelText: 'Téléphone',
-                      prefixIcon: Icon(Icons.phone),
-                      hintText: '+229 XX XX XX XX',
+                    decoration: InputDecoration(
+                      labelText: l10n.authPhone,
+                      prefixIcon: const Icon(Icons.phone),
+                      hintText: l10n.authPhoneHint,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer votre numéro';
+                        return l10n.authErrorPhoneRequired;
                       }
                       return null;
                     },
@@ -120,7 +135,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     keyboardType: TextInputType.number,
                     maxLength: 6,
                     decoration: InputDecoration(
-                      labelText: 'Code PIN',
+                      labelText: l10n.authPin,
                       prefixIcon: const Icon(Icons.lock),
                       suffixIcon: IconButton(
                         icon: Icon(_obscurePin ? Icons.visibility : Icons.visibility_off),
@@ -129,20 +144,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer votre PIN';
+                        return l10n.authErrorPinRequired;
                       }
                       if (value.length < 4) {
-                        return 'Le PIN doit faire au moins 4 chiffres';
+                        return l10n.authErrorPinTooShort;
                       }
                       return null;
                     },
                   ),
                   if (_errorMessage != null) ...[
                     const SizedBox(height: 12),
-                    Text(
-                      _errorMessage!,
-                      style: const TextStyle(color: AppTheme.errorColor),
-                      textAlign: TextAlign.center,
+                    Semantics(
+                      liveRegion: true,
+                      child: Text(
+                        _errorMessage!,
+                        style: const TextStyle(color: AppTheme.errorColor),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ],
                   const SizedBox(height: 24),
@@ -154,12 +172,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             width: 20,
                             child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
-                        : const Text('Se connecter'),
+                        : Text(l10n.authLogin),
                   ),
                   const SizedBox(height: 16),
                   TextButton(
                     onPressed: () => context.go('/forgot-pin'),
-                    child: const Text('PIN oublié ?'),
+                    child: Text(l10n.authForgotPin),
                   ),
                 ],
               ),

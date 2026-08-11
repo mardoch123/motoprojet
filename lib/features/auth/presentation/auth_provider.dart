@@ -129,6 +129,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(mustChangePin: false);
   }
 
+  /// Stocke le refresh token séparément (utilisé par l'AuthInterceptor pour le auto-refresh)
+  Future<void> saveRefreshToken(String token) async {
+    await _secureStorage.write(key: AppConstants.refreshTokenKey, value: token);
+  }
+
+  /// Récupère le refresh token stocké
+  Future<String?> getRefreshToken() async {
+    return _secureStorage.read(key: AppConstants.refreshTokenKey);
+  }
+
   /// Marque l'onboarding comme terminé
   Future<void> completeOnboarding() async {
     await _secureStorage.write(key: AppConstants.onboardingCompletedKey, value: 'true');

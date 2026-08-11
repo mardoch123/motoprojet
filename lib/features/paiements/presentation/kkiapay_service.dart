@@ -27,7 +27,7 @@ class KkiapayService {
     if (_config != null) return _config!;
 
     try {
-      final response = await _apiClient.get('/kkiapay/config');
+      final response = await _apiClient.get('/api/v1/kkiapay/config');
       final data = response.data as Map<String, dynamic>;
       final configData = data['data'] as Map<String, dynamic>;
 
@@ -57,7 +57,7 @@ class KkiapayService {
     String? date,
   }) async {
     try {
-      final response = await _apiClient.post('/kkiapay/paiements/initier', data: {
+      final response = await _apiClient.post('/api/v1/kkiapay/paiements/initier', data: {
         'vehicule_id': vehiculeId,
         'montant': montant,
         if (date != null) 'date': date,
@@ -90,7 +90,7 @@ class KkiapayService {
     String? date,
   }) async {
     try {
-      final response = await _apiClient.post('/kkiapay/paiements/verifier', data: {
+      final response = await _apiClient.post('/api/v1/kkiapay/paiements/verifier', data: {
         'transaction_id': transactionId,
         'vehicule_id': vehiculeId,
         'montant': montant,

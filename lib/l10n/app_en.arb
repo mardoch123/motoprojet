@@ -133,5 +133,21 @@
   "errorNetwork": "Connection error. Check your network.",
   "errorGeneric": "An error occurred. Please try again.",
   "errorRequired": "This field is required",
-  "errorInvalidAmount": "Invalid amount"
+  "errorInvalidAmount": "Invalid amount",
+
+  "authLoginTitle": "Sign in",
+  "authLoginSubtitle": "Taxi financing in Benin",
+  "authPhone": "Phone",
+  "authPhoneHint": "+229 XX XX XX XX",
+  "authPin": "PIN code",
+  "authLogin": "Sign in",
+  "authForgotPin": "Forgot PIN?",
+  "authErrorInvalidCredentials": "Invalid phone or PIN.",
+  "authErrorPhoneRequired": "Please enter your phone number",
+  "authErrorPinRequired": "Please enter your PIN",
+  "authErrorPinTooShort": "PIN must be at least 4 digits",
+  "authPaymentFavorites": "Favorites",
+  "authPaymentLastUsed": "Last used",
+  "authPaymentQuickPay": "QUICK PAY",
+  "authPaymentFavoriteSaved": "Favorite saved"
 }

@@ -99,7 +99,7 @@ class SyncService {
       }).toList();
 
       // Envoyer en batch
-      final response = await apiClient.post('/paiements/sync-batch', data: {
+      final response = await apiClient.post('/api/v1/paiements/sync-batch', data: {
         'paiements': batchPaiements,
       });
 

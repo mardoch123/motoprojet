@@ -82,22 +82,26 @@ class CertificatePinningAdapter extends IOHttpClientAdapter {
 /// des certificats de production. Obtenir les hashes avec :
 ///
 /// ```bash
-/// openssl s_client -connect api.motoprojet.bj:443 \
-///   -servername api.motoprojet.bj 2>/dev/null \
+/// # Pour motoprojet.fly.dev :
+/// openssl s_client -connect motoprojet.fly.dev:443 \
+///   -servername motoprojet.fly.dev 2>/dev/null \
 ///   | openssl x509 -noout -fingerprint -sha256 \
 ///   | sed 's/.*=//;s/://g' | xxd -r -p | base64
 /// ```
 ///
 /// Inclure au moins 2 hashes (certificat actuel + certificat de backup).
+/// Fly.io utilise Let's Encrypt — inclure le hash du certificat actuel
+/// et celui du certificat intermediate de backup (ISRG Root X1).
 class CertificatePins {
   CertificatePins._();
 
   /// Hashes SHA-256 des certificats autorisés (base64).
-  /// Remplacer par les vrais hashes en production.
+  ///
+  /// TODO(PRODUCTION): Remplacer par les vrais hashes SHA-256 de
+  /// `motoprojet.fly.dev`. La liste vide désactive le pinning.
   static const List<String> production = [
-    // À remplacer par les vrais hashes SHA-256 du certificat de production
-    // Exemple : 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='
-    // Inclure le certificat actuel ET un certificat de backup
+    // Hash du certificat actuel Let's Encrypt pour motoprojet.fly.dev
+    // Hash du certificat intermediate de backup (ISRG Root X1)
   ];
 
   /// Hashes pour l'environnement de développement (vide = pas de pinning).

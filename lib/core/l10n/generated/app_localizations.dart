@@ -705,6 +705,96 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Montant invalide'**
   String get errorInvalidAmount;
+
+  /// Title of the login screen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connexion'**
+  String get authLoginTitle;
+
+  /// Subtitle of the login screen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Financement de taxis au Bénin'**
+  String get authLoginSubtitle;
+
+  /// Phone field label.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléphone'**
+  String get authPhone;
+
+  /// Phone field hint.
+  ///
+  /// In fr, this message translates to:
+  /// **'+229 XX XX XX XX'**
+  String get authPhoneHint;
+
+  /// PIN field label.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code PIN'**
+  String get authPin;
+
+  /// Login button text.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter'**
+  String get authLogin;
+
+  /// Forgot PIN link text.
+  ///
+  /// In fr, this message translates to:
+  /// **'PIN oublié ?'**
+  String get authForgotPin;
+
+  /// Error message for invalid credentials.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléphone ou PIN incorrect.'**
+  String get authErrorInvalidCredentials;
+
+  /// Validation error for empty phone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veuillez entrer votre numéro'**
+  String get authErrorPhoneRequired;
+
+  /// Validation error for empty PIN.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veuillez entrer votre PIN'**
+  String get authErrorPinRequired;
+
+  /// Validation error for PIN too short.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le PIN doit faire au moins 4 chiffres'**
+  String get authErrorPinTooShort;
+
+  /// Favorites section title in payment screen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Favoris'**
+  String get authPaymentFavorites;
+
+  /// Last used section title in payment screen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernier utilisé'**
+  String get authPaymentLastUsed;
+
+  /// Quick pay button text.
+  ///
+  /// In fr, this message translates to:
+  /// **'PAIEMENT RAPIDE'**
+  String get authPaymentQuickPay;
+
+  /// Favorite saved confirmation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Favori enregistré'**
+  String get authPaymentFavoriteSaved;
 }
 
 class _AppLocalizationsDelegate

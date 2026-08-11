@@ -320,4 +320,49 @@ class AppLocalizationsFon extends AppLocalizations {
 
   @override
   String get errorInvalidAmount => 'Nùɖoɖo ɖe ǎ';
+
+  @override
+  String get authLoginTitle => 'Jlɛ';
+
+  @override
+  String get authLoginSubtitle => 'Nùɖoɖo mɔtɔ ɖo Benɛ̂n';
+
+  @override
+  String get authPhone => 'Telefɔni';
+
+  @override
+  String get authPhoneHint => '+229 XX XX XX XX';
+
+  @override
+  String get authPin => 'PIN nùkplɔn';
+
+  @override
+  String get authLogin => 'Jlɛ';
+
+  @override
+  String get authForgotPin => 'PIN ǎ?';
+
+  @override
+  String get authErrorInvalidCredentials => 'Telefɔn kpo PIN kpo ɖe ǎ.';
+
+  @override
+  String get authErrorPhoneRequired => 'Ðo telefɔn towe';
+
+  @override
+  String get authErrorPinRequired => 'Ðo PIN towe';
+
+  @override
+  String get authErrorPinTooShort => 'PIN ɖó ɖo azǎn 4';
+
+  @override
+  String get authPaymentFavorites => 'Nùɖaxo';
+
+  @override
+  String get authPaymentLastUsed => 'É gbɛzǎn';
+
+  @override
+  String get authPaymentQuickPay => 'JLƐ KPƆ́';
+
+  @override
+  String get authPaymentFavoriteSaved => 'Nùɖaxo jɛ';
 }

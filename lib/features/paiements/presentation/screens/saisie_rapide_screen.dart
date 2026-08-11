@@ -87,11 +87,49 @@ class _SaisieRapideScreenState extends ConsumerState<SaisieRapideScreen> {
       final vehiculesResp = await client.get('/vehicules');
       final vehiculesData = vehiculesResp.data as Map<String, dynamic>;
       _vehicules = List<Map<String, dynamic>>.from(vehiculesData['data'] as List);
+
+      // Pré-remplir depuis le dernier paiement (paiement en un clic)
+      _prefillFromLastPayment();
     } catch (e) {
       // En cas d'erreur, continuer avec des listes vides
     }
     if (mounted) {
       setState(() => _loadingData = false);
+    }
+  }
+
+  /// Pré-remplit les champs depuis le dernier paiement enregistré
+  void _prefillFromLastPayment() {
+    try {
+      final favoritesService = ref.read(paymentFavoritesServiceProvider);
+      final lastPayment = favoritesService.getLastPayment();
+      if (lastPayment == null) return;
+
+      // Pré-remplir chauffeur si toujours dans la liste
+      final chauffeurExists = _chauffeurs.any((c) => c['id']?.toString() == lastPayment.chauffeurId);
+      if (chauffeurExists) {
+        _selectedChauffeurId = lastPayment.chauffeurId;
+        _selectedChauffeurNom = lastPayment.chauffeurNom;
+        _selectedTelephone = _chauffeurs
+            .firstWhere((c) => c['id']?.toString() == lastPayment.chauffeurId, orElse: () => {})
+            ['telephone']
+            ?.toString();
+      }
+
+      // Pré-remplir véhicule si toujours dans la liste
+      final vehiculeExists = _vehicules.any((v) => v['id']?.toString() == lastPayment.vehiculeId);
+      if (vehiculeExists) {
+        _selectedVehiculeId = lastPayment.vehiculeId;
+        _selectedVehiculePlaque = lastPayment.vehiculePlaque;
+      }
+
+      // Pré-remplir le montant
+      _montant = lastPayment.montant;
+
+      // Pré-remplir le mode
+      _mode = lastPayment.mode;
+    } catch (_) {
+      // Silencieux en cas d'erreur
     }
   }
 
@@ -150,6 +188,9 @@ class _SaisieRapideScreenState extends ConsumerState<SaisieRapideScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // ── Paiement rapide (favoris) ──
+                      _buildQuickPaySection(l10n),
+
                       // ── Chauffeur ──
                       _buildSectionTitle(l10n.paymentDriver, Icons.person),
                       const SizedBox(height: 8),
@@ -337,6 +378,117 @@ class _SaisieRapideScreenState extends ConsumerState<SaisieRapideScreen> {
   }
 
   // ─── Helpers UI ────────────────────────────────────────────────────────────
+
+  /// Section "Paiement rapide" — affiche les favoris pour paiement en un clic
+  Widget _buildQuickPaySection(AppLocalizations l10n) {
+    final favorites = ref.watch(paymentFavoritesProvider);
+    if (favorites.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle(l10n.authPaymentQuickPay, Icons.flash_on),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 72,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: favorites.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 8),
+            itemBuilder: (context, index) {
+              final fav = favorites[index];
+              final isSelected = _selectedChauffeurId == fav.chauffeurId &&
+                  _selectedVehiculeId == fav.vehiculeId &&
+                  _montant == fav.montant;
+              return Semantics(
+                label: '${l10n.authPaymentQuickPay}: ${fav.chauffeurNom} — ${fav.montant.toStringAsFixed(0)} FCFA',
+                selected: isSelected,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedChauffeurId = fav.chauffeurId;
+                      _selectedChauffeurNom = fav.chauffeurNom;
+                      _selectedVehiculeId = fav.vehiculeId;
+                      _selectedVehiculePlaque = fav.vehiculePlaque;
+                      _montant = fav.montant;
+                      _mode = fav.mode;
+                      // Récupérer le téléphone si disponible
+                      final chauffeur = _chauffeurs.firstWhere(
+                        (c) => c['id']?.toString() == fav.chauffeurId,
+                        orElse: () => {},
+                      );
+                      _selectedTelephone = chauffeur['telephone']?.toString();
+                    });
+                  },
+                  child: Container(
+                    width: 160,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      gradient: isSelected
+                          ? const LinearGradient(
+                              colors: [AppTheme.primaryColor, Color(0xFF1565C0)],
+                            )
+                          : null,
+                      color: isSelected ? null : Colors.grey.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isSelected ? AppTheme.primaryColor : Colors.grey.shade300,
+                        width: isSelected ? 2 : 1,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.flash_on,
+                              size: 14,
+                              color: isSelected ? Colors.white : AppTheme.primaryColor,
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                fav.chauffeurNom,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: isSelected ? Colors.white : Colors.black87,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${fav.vehiculePlaque} — ${fav.montant.toStringAsFixed(0)} F',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isSelected ? Colors.white70 : Colors.grey.shade600,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${fav.usageCount}× ${fav.mode == 'cash' ? l10n.paymentModeCash : l10n.paymentModeMobileMoney}',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: isSelected ? Colors.white60 : Colors.grey.shade500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 20),
+      ],
+    );
+  }
 
   Widget _buildSectionTitle(String title, IconData icon) {
     return Semantics(
@@ -644,6 +796,21 @@ class _SaisieRapideScreenState extends ConsumerState<SaisieRapideScreen> {
         );
 
     if (result != null && mounted) {
+      // Enregistrer dans les favoris pour paiement en un clic
+      try {
+        final favoritesService = ref.read(paymentFavoritesServiceProvider);
+        await favoritesService.recordPayment(
+          chauffeurId: _selectedChauffeurId!,
+          chauffeurNom: _selectedChauffeurNom ?? '',
+          vehiculeId: _selectedVehiculeId!,
+          vehiculePlaque: _selectedVehiculePlaque ?? '',
+          montant: _montant,
+          mode: _mode,
+        );
+      } catch (_) {
+        // Silencieux — les favoris ne doivent pas bloquer le paiement
+      }
+
       setState(() => _showSuccess = true);
     }
   }

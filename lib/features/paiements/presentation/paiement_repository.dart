@@ -85,7 +85,7 @@ class PaiementRepository {
     String mode = 'kkiapay',
   }) async {
     try {
-      final response = await apiClient.post('/paiements', data: {
+      final response = await apiClient.post('/api/v1/paiements', data: {
         'chauffeur_id': chauffeurId,
         'vehicule_id': vehiculeId,
         'montant': montant,
@@ -173,7 +173,7 @@ class PaiementRepository {
         if (dateFin != null) params['date_fin'] = dateFin;
         if (mode != null) params['mode'] = mode;
 
-        final response = await apiClient.get('/paiements', queryParameters: params);
+        final response = await apiClient.get('/api/v1/paiements', queryParameters: params);
         final responseData = response.data as Map<String, dynamic>;
         return (responseData['data'] as List)
             .map((e) => PaiementModel.fromJson(e as Map<String, dynamic>))

@@ -14,6 +14,7 @@ import { logger } from './utils/logger.js';
 import { startScheduler, stopScheduler } from './jobs/scheduler.js';
 import { initSentry, captureException } from './services/sentry.js';
 import { monitoringMiddleware } from './services/monitoringService.js';
+import { sanitizeBody } from './middleware/sanitize.js';
 
 const app = express();
 
@@ -22,15 +23,24 @@ initSentry();
 
 // ─── Middlewares globaux ─────────────────────────────────────────────────────
 app.use(helmet());
-// CORS restrictif : uniquement le domaine Flutter + API
+// CORS restrictif : uniquement les domaines autorisés
+// En production : app web Flutter + API backend sur Fly.io
+// En dev : accepter tout (hot reload, simulateurs, etc.)
 app.use(cors({
   origin: config.nodeEnv === 'production'
-    ? ['https://motoprojet.bj', 'https://www.motoprojet.bj']
-    : true, // En dev, accepter tout
+    ? [
+        'https://motoprojet.fly.dev',   // Backend Fly.io (app native Flutter + web)
+        'https://motoprojet.bj',         // Domaine personnalisé (si configuré)
+        'https://www.motoprojet.bj',
+      ]
+    : true,
   credentials: true,
 }));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Sanitization XSS : nettoie les balises HTML et scripts de tous les champs string
+app.use(sanitizeBody);
 
 // Rate limiting global (120 req/min/IP)
 app.use(globalRateLimiter);

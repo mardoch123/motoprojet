@@ -322,4 +322,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorInvalidAmount => 'Invalid amount';
+
+  @override
+  String get authLoginTitle => 'Sign in';
+
+  @override
+  String get authLoginSubtitle => 'Taxi financing in Benin';
+
+  @override
+  String get authPhone => 'Phone';
+
+  @override
+  String get authPhoneHint => '+229 XX XX XX XX';
+
+  @override
+  String get authPin => 'PIN code';
+
+  @override
+  String get authLogin => 'Sign in';
+
+  @override
+  String get authForgotPin => 'Forgot PIN?';
+
+  @override
+  String get authErrorInvalidCredentials => 'Invalid phone or PIN.';
+
+  @override
+  String get authErrorPhoneRequired => 'Please enter your phone number';
+
+  @override
+  String get authErrorPinRequired => 'Please enter your PIN';
+
+  @override
+  String get authErrorPinTooShort => 'PIN must be at least 4 digits';
+
+  @override
+  String get authPaymentFavorites => 'Favorites';
+
+  @override
+  String get authPaymentLastUsed => 'Last used';
+
+  @override
+  String get authPaymentQuickPay => 'QUICK PAY';
+
+  @override
+  String get authPaymentFavoriteSaved => 'Favorite saved';
 }

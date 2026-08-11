@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:motoprojet/core/network/providers.dart';
 import 'package:motoprojet/core/network/sync_service.dart';
 import 'package:motoprojet/features/paiements/presentation/paiement_repository.dart';
+import 'package:motoprojet/features/paiements/presentation/payment_favorites_service.dart';
 import 'package:motoprojet/shared/models/paiement_model.dart';
 
 /// État de la liste des paiements
@@ -193,4 +194,22 @@ final paiementsListProvider =
 final saisieRapideProvider =
     StateNotifierProvider<SaisieRapideNotifier, SaisieRapideState>((ref) {
   return SaisieRapideNotifier(ref);
+});
+
+// ─── Providers favoris paiement ─────────────────────────────────────────────
+
+final paymentFavoritesServiceProvider = Provider<PaymentFavoritesService>((ref) {
+  final service = PaymentFavoritesService();
+  service.init();
+  return service;
+});
+
+final lastPaymentProvider = Provider<LastPayment?>((ref) {
+  final service = ref.watch(paymentFavoritesServiceProvider);
+  return service.getLastPayment();
+});
+
+final paymentFavoritesProvider = Provider<List<PaymentFavorite>>((ref) {
+  final service = ref.watch(paymentFavoritesServiceProvider);
+  return service.getFavorites();
 });

@@ -324,4 +324,49 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get errorInvalidAmount => 'Montant invalide';
+
+  @override
+  String get authLoginTitle => 'Connexion';
+
+  @override
+  String get authLoginSubtitle => 'Financement de taxis au Bénin';
+
+  @override
+  String get authPhone => 'Téléphone';
+
+  @override
+  String get authPhoneHint => '+229 XX XX XX XX';
+
+  @override
+  String get authPin => 'Code PIN';
+
+  @override
+  String get authLogin => 'Se connecter';
+
+  @override
+  String get authForgotPin => 'PIN oublié ?';
+
+  @override
+  String get authErrorInvalidCredentials => 'Téléphone ou PIN incorrect.';
+
+  @override
+  String get authErrorPhoneRequired => 'Veuillez entrer votre numéro';
+
+  @override
+  String get authErrorPinRequired => 'Veuillez entrer votre PIN';
+
+  @override
+  String get authErrorPinTooShort => 'Le PIN doit faire au moins 4 chiffres';
+
+  @override
+  String get authPaymentFavorites => 'Favoris';
+
+  @override
+  String get authPaymentLastUsed => 'Dernier utilisé';
+
+  @override
+  String get authPaymentQuickPay => 'PAIEMENT RAPIDE';
+
+  @override
+  String get authPaymentFavoriteSaved => 'Favori enregistré';
 }
